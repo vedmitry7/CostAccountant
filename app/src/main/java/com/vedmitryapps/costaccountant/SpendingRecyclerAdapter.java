@@ -1,0 +1,71 @@
+package com.vedmitryapps.costaccountant;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.vedmitryapps.costaccountant.models.Day;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecyclerAdapter.ViewHolder>{
+
+
+    Context context;
+
+    Day day;
+
+    public SpendingRecyclerAdapter(Day day) {
+        this.day = day;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if(context==null){
+            context = parent.getContext();
+        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.spending_row, parent, false);
+        return new ViewHolder(view);
+    }
+
+    // binds the data to the TextView in each row
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+
+
+        holder.productName.setText(day.getList().get(position).getProduct().getName());
+        holder.productPrice.setText("" + day.getList().get(position).getPrice());
+    }
+
+    // total number of rows
+    @Override
+    public int getItemCount() {
+        return day.getList().size();
+    }
+
+    public void update(Day day) {
+        this.day = day;
+        notifyDataSetChanged();
+    }
+
+    // stores and recycles views as they are scrolled off screen
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.productName)
+        TextView productName;
+
+        @BindView(R.id.productPrice)
+        TextView productPrice;
+
+        ViewHolder(final View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+
+        }
+    }
+
+}
