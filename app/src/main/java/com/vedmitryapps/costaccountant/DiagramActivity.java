@@ -7,12 +7,10 @@ import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -21,12 +19,10 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.vedmitryapps.costaccountant.models.Category;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
-import com.vedmitryapps.costaccountant.models.Product;
 
-import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,17 +59,31 @@ public class DiagramActivity extends AppCompatActivity {
         description.setText("bla bla bla");
         mChart.setDescription(description);
 
+        float scale = getResources().getDisplayMetrics().density;
+        mChart.setCameraDistance(300);
+
         // enable hole and configure
-        mChart.setDrawHoleEnabled(true);
+        mChart.setDrawHoleEnabled(false);
        // mChart.setHoleColorTransparent(true);
-        mChart.setHoleRadius(7);
-        mChart.setTransparentCircleRadius(10);
+        mChart.setHoleRadius(20);
+        mChart.setTransparentCircleRadius(30);
+
+
+
 
         // enable rotation of the chart by touch
         mChart.setRotationAngle(0);
         mChart.setRotationEnabled(true);
 
         mChart.setDrawSlicesUnderHole(true);
+
+        mChart.setEntryLabelColor(Color.BLACK);
+        mChart.setEntryLabelTextSize(14f);
+
+      //  mChart.setCenterTextSize(18f);
+
+       // mChart.animateY(300);
+
 
         // set a chart value selected listener
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -93,6 +103,11 @@ public class DiagramActivity extends AppCompatActivity {
             }
         });
 
+
+        ViewPortHandler handler = mChart.getViewPortHandler();
+
+        handler.setChartDimens(400, 400);
+
         // add data
         addData();
 
@@ -101,6 +116,9 @@ public class DiagramActivity extends AppCompatActivity {
         l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
         l.setXEntrySpace(7);
         l.setYEntrySpace(5);
+        l.setTextSize(13f);
+
+
     }
 
     private void addData() {
@@ -133,18 +151,22 @@ public class DiagramActivity extends AppCompatActivity {
             yVals1.add(new PieEntry((float) d, (String) entry.getKey()));
         }
 
-      /*  for (int i = 0; i < yData.length; i++)
-            yVals1.add(new PieEntry(yData[i], xData[i]));*/
-
-  /*      ArrayList<String> xVals = new ArrayList<String>();
-
-        for (int i = 0; i < xData.length; i++)
-            xVals.add(xData[i]);*/
-
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "Категории");
-        dataSet.setSliceSpace(3);
-        dataSet.setSelectionShift(5);
+       // dataSet.setValueLinePart1OffsetPercentage(20.f);
+        dataSet.setSliceSpace(0.1f);
+        dataSet.setSelectionShift(7);
+
+
+        //value lines params
+        dataSet.setValueLinePart1Length(0.1f);
+        dataSet.setValueLinePart2Length(0.2f);
+        dataSet.setValueTextColor(Color.BLACK);
+
+        dataSet.setValueLinePart1OffsetPercentage(60);
+
+        dataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
 
         // add many colors
         ArrayList<Integer> colors = new ArrayList<Integer>();
@@ -170,8 +192,8 @@ public class DiagramActivity extends AppCompatActivity {
         // instantiate pie data object now
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.GRAY);
+        data.setValueTextSize(13f);
+        data.setValueTextColor(Color.BLACK);
 
         mChart.setData(data);
 
