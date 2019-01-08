@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    // Temporary fix until alpha10
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
 }
 
 dependencies {
@@ -41,4 +45,7 @@ dependencies {
 
     //ProgressLayout
     implementation 'com.github.iammert:ProgressLayout:a2ac196500'
+
+    //Chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
 }
