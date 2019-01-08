@@ -3,6 +3,7 @@ package com.vedmitryapps.costaccountant;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -20,11 +21,21 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.vedmitryapps.costaccountant.models.Category;
+import com.vedmitryapps.costaccountant.models.Day;
+import com.vedmitryapps.costaccountant.models.DayPair;
+import com.vedmitryapps.costaccountant.models.Product;
 
+import java.security.acl.Group;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class DiagramActivity extends AppCompatActivity {
 
@@ -36,12 +47,15 @@ public class DiagramActivity extends AppCompatActivity {
     @BindView(R.id.chart)
     PieChart mChart;
 
+    Realm realm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diagram);
 
         ButterKnife.bind(this);
+        realm = Realm.getDefaultInstance();
 
         // configure pie chart
         mChart.setUsePercentValues(true);
@@ -58,6 +72,8 @@ public class DiagramActivity extends AppCompatActivity {
         // enable rotation of the chart by touch
         mChart.setRotationAngle(0);
         mChart.setRotationEnabled(true);
+
+        mChart.setDrawSlicesUnderHole(true);
 
         // set a chart value selected listener
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -88,10 +104,37 @@ public class DiagramActivity extends AppCompatActivity {
     }
 
     private void addData() {
+
+        RealmResults<Day> days = realm.where(Day.class).findAll();
+
+        HashMap<String, Double> map = new HashMap<>();
+
+        for (Day d:days
+             ) {
+            RealmList<DayPair> pairs = d.getList();
+            for (DayPair pair:pairs
+                 ) {
+                if(map.containsKey(pair.getProduct().getCategory().getName())){
+                    double sum = map.get(pair.getProduct().getCategory().getName());
+                    sum += pair.getPrice();
+                    map.put(pair.getProduct().getCategory().getName(), sum);
+                } else {
+                    map.put(pair.getProduct().getCategory().getName(), pair.getPrice());
+                }
+            }
+        }
+
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
 
-        for (int i = 0; i < yData.length; i++)
-            yVals1.add(new PieEntry(yData[i], xData[i], i));
+        for (Map.Entry entry : map.entrySet()) {
+
+           double d = (Double) entry.getValue();
+            Log.i("TAG21", "d - " + d + " name - " + entry.getKey());
+            yVals1.add(new PieEntry((float) d, (String) entry.getKey()));
+        }
+
+      /*  for (int i = 0; i < yData.length; i++)
+            yVals1.add(new PieEntry(yData[i], xData[i]));*/
 
   /*      ArrayList<String> xVals = new ArrayList<String>();
 
@@ -99,7 +142,7 @@ public class DiagramActivity extends AppCompatActivity {
             xVals.add(xData[i]);*/
 
         // create pie data set
-        PieDataSet dataSet = new PieDataSet(yVals1, "Market Share");
+        PieDataSet dataSet = new PieDataSet(yVals1, "Категории");
         dataSet.setSliceSpace(3);
         dataSet.setSelectionShift(5);
 

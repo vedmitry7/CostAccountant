@@ -10,6 +10,15 @@ public class Product extends RealmObject {
     Double defPrice;
     boolean useDefPrice;
     Category category;
+    String categoryName;
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
     public String getName() {
         return name;

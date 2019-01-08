@@ -2,6 +2,7 @@ package com.vedmitryapps.costaccountant;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -111,6 +112,14 @@ public class MainActivity extends AppCompatActivity {
         showDate();
         initDay();
         adapter.update(day);
+
+    }
+
+
+    @OnClick(R.id.imageButton3)
+    public void imageButton3(View v){
+        Intent intent = new Intent(this, DiagramActivity.class);
+        startActivity(intent);
 
     }
 
@@ -311,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
                             c = realm.createObject(Category.class, Util.getTrimString(categoryNameEditText.getText().toString()));
                         }
                         p.setCategory(c);
+                        p.setCategoryName(c.getName());
                         day.getList().add(new DayPair(p, price));
                         realm.commitTransaction();
 
