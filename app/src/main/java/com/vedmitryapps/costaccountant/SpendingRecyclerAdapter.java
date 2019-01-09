@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.vedmitryapps.costaccountant.models.Day;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -35,7 +37,6 @@ public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecycl
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-
 
         holder.productName.setText(day.getList().get(position).getProduct().getName());
         holder.productPrice.setText("" + day.getList().get(position).getPrice());
@@ -65,6 +66,12 @@ public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecycl
             super(itemView);
             ButterKnife.bind(this, itemView);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EventBus.getDefault().post(new Events.ClickProduct(getAdapterPosition()));
+                }
+            });
         }
     }
 

@@ -1,5 +1,6 @@
 package com.vedmitryapps.costaccountant;
 
+import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -27,6 +29,10 @@ import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -130,9 +136,20 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.bottomButton)
     public void bottomButton(View v){
+        showCreateOrChangeDialog(null);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showCreateOrChangeDialog(final Events.ClickProduct event) {
+
 
         final Product[] product = new Product[1];
         final Category[] category = new Category[1];
+
+        if(event!=null){
+            product[0] = day.getList().get(event.getPosition()).getProduct();
+            category[0] = day.getList().get(event.getPosition()).getProduct().getCategory();
+        }
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         //dialogBuilder.setTitle("Трата");
@@ -150,12 +167,15 @@ public class MainActivity extends AppCompatActivity {
         final AutoCompleteTextView categoryNameEditText = dialogView.findViewById(R.id.categoryEditText);
         final EditText priceEditText = dialogView.findViewById(R.id.priceEditText);
 
+        final CheckBox rememberPriceCheckBox = dialogView.findViewById(R.id.rememberPriceCheckBox);
+
         productNameEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(product[0]!=null && product[0].getCategory()!=null){
                     Log.i("TAG21", "");
                     priceEditText.requestFocus();
+                    priceEditText.setSelection(priceEditText.getText().length());
                 } else {
                     categoryNameEditText.requestFocus();
                 }
@@ -204,13 +224,21 @@ public class MainActivity extends AppCompatActivity {
 
                     if(product[0].getCategory()!=null){
                         Log.d("TAG21", "Product category found");
-                        categoryNameEditText.setText(product[0].getCategory().getName());
+                        if(event==null){
+                            categoryNameEditText.setText(product[0].getCategory().getName());
+                            rememberPriceCheckBox.setChecked(product[0].isUseDefPrice());
+                            if(product[0].isUseDefPrice()){
+                                priceEditText.setText(String.valueOf(product[0].getDefPrice()));
+                            }
+                        }
                     } else {
                         Log.d("TAG21", "Product category not found");
                     }
                 } else {
                     Log.d("TAG21", "Product not found");
-                    categoryNameEditText.setText("");
+                    if(event==null) {
+                            categoryNameEditText.setText("");
+                    }
                 }
             }
         });
@@ -255,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                     if(product[0]!=null && product[0].getCategory()!=null){
                         Log.i("TAG21", "");
                         priceEditText.requestFocus();
+                        priceEditText.setSelection(priceEditText.getText().length());
                     } else {
                         categoryNameEditText.requestFocus();
                     }
@@ -270,13 +299,24 @@ public class MainActivity extends AppCompatActivity {
 
                 if (event.getAction() == KeyEvent.ACTION_DOWN
                         && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    Log.i("TAG21", "Enter");
+                    Log.i("TAG21", "Enter - " + priceEditText.getText().length());
                     priceEditText.requestFocus();
+                    priceEditText.setSelection(priceEditText.getText().length());
                     return true;
                 }
                 return true;
             }
         });
+
+            if(product[0]!=null){
+                productNameEditText.setText(product[0].getName());
+                productNameEditText.dismissDropDown();
+                priceEditText.setText(String.valueOf(day.getList().get(event.getPosition()).getPrice()));
+                categoryNameEditText.setText(product[0].getCategory().getName());
+                rememberPriceCheckBox.setChecked(product[0].isUseDefPrice());
+            }
+
+
 
 
         final AlertDialog b = dialogBuilder.create();
@@ -294,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
                         // TODO Do something
 
 
-                        if(productNameEditText.getText().toString().length()==0){
+                        if(Util.getTrimString(productNameEditText.getText().toString()).length()==0){
                             productContainer.setError("Поле не может быть пустым");
                             return;
                         }
@@ -309,34 +349,44 @@ public class MainActivity extends AppCompatActivity {
                             price = 0;
                         }
 
-                        if(!categoryNameEditText.getText().toString().equals("")){
-                        }
-
                         realm.beginTransaction();
                         if(p==null){
                             p = realm.createObject(Product.class, Util.getTrimString(productNameEditText.getText().toString()));
                         }
+
                         if(c==null){
                             c = realm.createObject(Category.class, Util.getTrimString(categoryNameEditText.getText().toString()));
                         }
+                        Log.i("TAG21", "category - " + c.getName());
+
                         p.setCategory(c);
                         p.setCategoryName(c.getName());
-                        day.getList().add(new DayPair(p, price));
+                        p.setUseDefPrice(rememberPriceCheckBox.isChecked());
+                        if(rememberPriceCheckBox.isChecked()){
+                            p.setDefPrice(price);
+                        } else {
+                            //p.setDefPrice();
+                        }
+                        if(event!=null){
+                            day.getList().add(event.getPosition(), new DayPair(p, price));
+                            day.getList().remove(event.getPosition()+1);
+                        } else {
+                            day.getList().add(new DayPair(p, price));
+                        }
                         realm.commitTransaction();
 
 
                         dayCount.setText("Всего: " + Util.countDayPrice(day));
                         b.dismiss();
                         closeKeyboard();
+                        adapter.notifyDataSetChanged();
                     }
                 });
             }
         });
+
         b.show();
-
         showKeyboard();
-
-        adapter.notifyDataSetChanged();
     }
 
     public void closeKeyboard(){
@@ -344,4 +394,16 @@ public class MainActivity extends AppCompatActivity {
         inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
+
+    @Override
+    protected void onStart() {
+        EventBus.getDefault().register(this);
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
 }
