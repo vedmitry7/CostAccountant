@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.Chart;
@@ -15,6 +16,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -43,6 +46,10 @@ public class DiagramActivity extends AppCompatActivity {
     @BindView(R.id.chart)
     PieChart mChart;
 
+    @BindView(R.id.period)
+    TextView period;
+
+
     Realm realm;
 
     @Override
@@ -56,9 +63,9 @@ public class DiagramActivity extends AppCompatActivity {
         // configure pie chart
         mChart.setUsePercentValues(true);
 
-        /*        Description description = new Description();
-        description.setText("bla bla bla");
-        mChart.setDescription(description);*/
+        Description description = new Description();
+        description.setText("");
+        mChart.setDescription(description);
 
         float scale = getResources().getDisplayMetrics().density;
         mChart.setCameraDistance(300);
@@ -94,6 +101,8 @@ public class DiagramActivity extends AppCompatActivity {
                 if (e == null)
                     return;
 
+                period.setText("x - " + e.getY() + " " + (String) e.getData());
+
                 Toast.makeText(DiagramActivity.this,
                         xData[(int)e.getX()] + " = " + e.getData() + "%", Toast.LENGTH_SHORT).show();
             }
@@ -107,31 +116,14 @@ public class DiagramActivity extends AppCompatActivity {
 
         ViewPortHandler handler = mChart.getViewPortHandler();
 
-        handler.setMaximumScaleX(0.7f);
-
-
-       // handler.setChartDimens(400, 400);
-        Log.i("TAG21", "h - " + handler.getChartHeight());
-        Log.i("TAG21", "w - " + handler.getChartWidth());
-        Log.i("TAG21", "scX - " + handler.getMaxScaleX());
-        Log.i("TAG21", "scY - " + handler.getMaxScaleY());
-        Log.i("TAG21", "content right - " + handler.contentRight());
-        Log.i("TAG21", "offset right- " + handler.offsetRight());
-
-
-        handler.restrainViewPort(100, 200,150,300);;
-
+        //handler.restrainViewPort(100, 200,150,300);;
         mChart.setExtraOffsets(20,0,20,0);
-
-
         // customize legends
-/*        Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        Legend l = mChart.getLegend();
+        l.setPosition(Legend.LegendPosition.LEFT_OF_CHART);
         l.setXEntrySpace(7);
         l.setYEntrySpace(5);
-        l.setTextSize(13f);*/
-
-
+        l.setTextSize(13f);
 
 
         mChart.calculateOffsets();
@@ -140,10 +132,6 @@ public class DiagramActivity extends AppCompatActivity {
 
         // add data
         addData();
-
-
-
-
     }
 
     private void addData() {
