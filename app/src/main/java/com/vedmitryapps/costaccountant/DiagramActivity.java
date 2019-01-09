@@ -55,9 +55,10 @@ public class DiagramActivity extends AppCompatActivity {
 
         // configure pie chart
         mChart.setUsePercentValues(true);
-        Description description = new Description();
+
+        /*        Description description = new Description();
         description.setText("bla bla bla");
-        mChart.setDescription(description);
+        mChart.setDescription(description);*/
 
         float scale = getResources().getDisplayMetrics().density;
         mChart.setCameraDistance(300);
@@ -106,17 +107,41 @@ public class DiagramActivity extends AppCompatActivity {
 
         ViewPortHandler handler = mChart.getViewPortHandler();
 
-        handler.setChartDimens(400, 400);
+        handler.setMaximumScaleX(0.7f);
+
+
+       // handler.setChartDimens(400, 400);
+        Log.i("TAG21", "h - " + handler.getChartHeight());
+        Log.i("TAG21", "w - " + handler.getChartWidth());
+        Log.i("TAG21", "scX - " + handler.getMaxScaleX());
+        Log.i("TAG21", "scY - " + handler.getMaxScaleY());
+        Log.i("TAG21", "content right - " + handler.contentRight());
+        Log.i("TAG21", "offset right- " + handler.offsetRight());
+
+
+        handler.restrainViewPort(100, 200,150,300);;
+
+        mChart.setExtraOffsets(20,0,20,0);
+
+
+        // customize legends
+/*        Legend l = mChart.getLegend();
+        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        l.setXEntrySpace(7);
+        l.setYEntrySpace(5);
+        l.setTextSize(13f);*/
+
+
+
+
+        mChart.calculateOffsets();
+        mChart.invalidate();
+        mChart.refreshDrawableState();
 
         // add data
         addData();
 
-        // customize legends
-        Legend l = mChart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
-        l.setXEntrySpace(7);
-        l.setYEntrySpace(5);
-        l.setTextSize(13f);
+
 
 
     }
@@ -159,14 +184,16 @@ public class DiagramActivity extends AppCompatActivity {
 
 
         //value lines params
-        dataSet.setValueLinePart1Length(0.1f);
+        dataSet.setValueLinePart1Length(0.6f);
         dataSet.setValueLinePart2Length(0.2f);
         dataSet.setValueTextColor(Color.BLACK);
 
-        dataSet.setValueLinePart1OffsetPercentage(60);
+        dataSet.setValueLinePart1OffsetPercentage(100);
 
         dataSet.setXValuePosition(PieDataSet.ValuePosition.INSIDE_SLICE);
         dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+
+
 
         // add many colors
         ArrayList<Integer> colors = new ArrayList<Integer>();
