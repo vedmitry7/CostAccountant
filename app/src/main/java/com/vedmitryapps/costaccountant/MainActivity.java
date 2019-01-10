@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showCreateOrChangeDialog(final Events.ClickProduct event) {
 
+        final boolean[] categoryWasFilledFirst = {false};
 
         final Product[] product = new Product[1];
         final Category[] category = new Category[1];
@@ -225,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     if(product[0].getCategory()!=null){
                         Log.d("TAG21", "Product category found");
                         if(event==null){
+                            if(!categoryWasFilledFirst[0])
                             categoryNameEditText.setText(product[0].getCategory().getName());
                             rememberPriceCheckBox.setChecked(product[0].isUseDefPrice());
                             if(product[0].isUseDefPrice()){
@@ -237,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Log.d("TAG21", "Product not found");
                     if(event==null) {
+                        if(!categoryWasFilledFirst[0])
                             categoryNameEditText.setText("");
                     }
                 }
@@ -256,6 +259,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 Log.d("TAG21", "category enter - " + s + ".");
+
+                if(productNameEditText.getText().length() == 0){
+                    categoryWasFilledFirst[0] = true;
+                    Log.d("TAG21", "Category was filled first");
+                }
 
                 category[0] = realm.where(Category.class).equalTo("name", Util.getTrimString(s.toString())).findFirst();
 
@@ -310,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
 
             if(product[0]!=null){
                 productNameEditText.setText(product[0].getName());
+                productNameEditText.setSelection(product[0].getName().length());
                 productNameEditText.dismissDropDown();
                 priceEditText.setText(String.valueOf(day.getList().get(event.getPosition()).getPrice()));
                 categoryNameEditText.setText(product[0].getCategory().getName());
