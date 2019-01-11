@@ -7,7 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Pair;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +32,11 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -247,6 +253,8 @@ public class DiagramActivity extends AppCompatActivity {
         mChart.invalidate();
     }
 
+
+
     @OnClick(R.id.changeView)
     public void changeView(View v){
         Log.i("TAG21", "cl");
@@ -258,6 +266,95 @@ public class DiagramActivity extends AppCompatActivity {
         else {
             recyclerView.setVisibility(View.VISIBLE);
             mChart.setVisibility(View.GONE);
+        }
+    }
+
+    @OnClick(R.id.constraintLayout2)
+    public void constraintLayout2(View v){
+        Log.i("TAG21", "cl");
+
+        final ArrayList<String> list = new ArrayList<>();
+
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        final Calendar calendar = Calendar.getInstance();
+        popupMenu.inflate(R.menu.popup);
+
+        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.today:
+                        Log.i("TAG21", dateFormat.format(calendar.getTime()));
+                        list.add(dateFormat.format(calendar.getTime()));
+                        break;
+                    case R.id.yesterday:
+                        calendar.add(Calendar.DAY_OF_MONTH, -1);
+                        list.add(dateFormat.format(calendar.getTime()));
+                        break;
+                    case R.id.lastSevenDays:
+                        list.add(dateFormat.format(calendar.getTime()));
+                        for (int i = 0; i < 6; i++) {
+                            calendar.add(Calendar.DAY_OF_MONTH, -1);
+                            list.add(dateFormat.format(calendar.getTime()));
+                            Log.i("TAG21", dateFormat.format(calendar.getTime()));
+                        }
+                        break;
+                    case R.id.lastMonth:
+                        calendar.add(Calendar.MONTH, -1);
+                        calendar.set(Calendar.DAY_OF_MONTH, 1);
+                        list.add(dateFormat.format(calendar.getTime()));
+                        for (int i = 0; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-1; i++) {
+                            calendar.add(Calendar.DAY_OF_MONTH, 1);
+                            list.add(dateFormat.format(calendar.getTime()));
+                            Log.i("TAG21", dateFormat.format(calendar.getTime()));
+                        }
+                        break;
+                    case R.id.lastThirtyDays:
+                        list.add(dateFormat.format(calendar.getTime()));
+                        for (int i = 0; i < 29; i++) {
+                            calendar.add(Calendar.DAY_OF_MONTH, -1);
+                            list.add(dateFormat.format(calendar.getTime()));
+                            Log.i("TAG21", dateFormat.format(calendar.getTime()));
+                        }
+                        break;
+                    case R.id.allTime:
+
+                        break;
+                    case R.id.currentMonth:
+                        int days =  calendar.get(Calendar.DAY_OF_MONTH);
+
+                        calendar.set(Calendar.DAY_OF_MONTH, 1);
+                        list.add(dateFormat.format(calendar.getTime()));
+
+                        for (int i = 1; i < days; i++) {
+                            calendar.add(Calendar.DAY_OF_MONTH, 1);
+                            list.add(dateFormat.format(calendar.getTime()));
+                            Log.i("TAG21", dateFormat.format(calendar.getTime()));
+                        }
+                        break;
+
+
+                }
+                return false;
+            }
+        });
+
+        popupMenu.show();
+    }
+
+
+    public void updatePairList(ArrayList<String> list){
+
+        ArrayList<Day> days = new ArrayList<>();
+        for (String s:list
+             ) {
+            Day day = realm.where(Day.class).equalTo("id", s).findFirst();
+
+            if(day!=null){
+                days.add(day);
+            }
         }
     }
 }

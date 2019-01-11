@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Сегодня"
+        android:id="@+id/today"/>
+    <item android:title="Вчера"
+        android:id="@+id/yesterday"/>
+    <item android:title="Последние 7 дней"
+        android:id="@+id/lastSevenDays"/>
+    <item android:title="Текущий месяц"
+        android:id="@+id/currentMonth" />
+    <item android:title="Последние 30 дней"
+        android:id="@+id/lastThirtyDays" />
+    <item android:title="В прошлом месяце"
+        android:id="@+id/lastMonth" />
+    <item android:title="Весь период"
+        android:id="@+id/allTime" />
+    <item android:title="Собственный..."
+        android:id="@+id/custom" />
+</menu>
