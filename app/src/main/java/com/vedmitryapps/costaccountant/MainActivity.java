@@ -350,10 +350,10 @@ public class MainActivity extends AppCompatActivity {
 
                         Product p = product[0];
                         Category c = category[0];
-                        double price;
+                        float price;
 
                         if(!priceEditText.getText().toString().equals("")){
-                            price = Double.parseDouble(priceEditText.getText().toString());
+                            price = Float.parseFloat(priceEditText.getText().toString());
                         } else {
                             price = 0;
                         }

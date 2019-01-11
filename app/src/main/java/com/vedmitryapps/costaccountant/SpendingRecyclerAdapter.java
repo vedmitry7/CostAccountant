@@ -16,9 +16,7 @@ import butterknife.ButterKnife;
 
 public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecyclerAdapter.ViewHolder>{
 
-
     Context context;
-
     Day day;
 
     public SpendingRecyclerAdapter(Day day) {
@@ -40,6 +38,8 @@ public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecycl
 
         holder.productName.setText(day.getList().get(position).getProduct().getName());
         holder.productPrice.setText("" + day.getList().get(position).getPrice());
+
+        holder.productCategory.setText(day.getList().get(position).getProduct().getCategory().getName());
     }
 
     // total number of rows
@@ -61,6 +61,9 @@ public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecycl
 
         @BindView(R.id.productPrice)
         TextView productPrice;
+
+        @BindView(R.id.productCategory)
+        TextView productCategory;
 
         ViewHolder(final View itemView) {
             super(itemView);

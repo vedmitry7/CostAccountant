@@ -3,7 +3,11 @@ package com.vedmitryapps.costaccountant;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +36,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -46,11 +51,18 @@ public class DiagramActivity extends AppCompatActivity {
     @BindView(R.id.chart)
     PieChart mChart;
 
+    @BindView(R.id.statisticRecyclerView)
+    RecyclerView recyclerView;
+
     @BindView(R.id.period)
     TextView period;
 
-
     Realm realm;
+
+    ArrayList<Pair<String, Float>> list = new ArrayList<>();
+
+    StatisticRecyclerAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +88,6 @@ public class DiagramActivity extends AppCompatActivity {
         mChart.setHoleRadius(20);
         mChart.setTransparentCircleRadius(30);
 
-
-
-
         // enable rotation of the chart by touch
         mChart.setRotationAngle(0);
         mChart.setRotationEnabled(true);
@@ -91,7 +100,6 @@ public class DiagramActivity extends AppCompatActivity {
       //  mChart.setCenterTextSize(18f);
 
        // mChart.animateY(300);
-
 
         // set a chart value selected listener
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -125,6 +133,8 @@ public class DiagramActivity extends AppCompatActivity {
         l.setYEntrySpace(5);
         l.setTextSize(13f);
 
+        l.setEnabled(false);
+
 
         mChart.calculateOffsets();
         mChart.invalidate();
@@ -132,36 +142,50 @@ public class DiagramActivity extends AppCompatActivity {
 
         // add data
         addData();
+
+        initRecycler();
+    }
+
+    private void initRecycler() {
+        adapter = new StatisticRecyclerAdapter(list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
     }
 
     private void addData() {
 
         RealmResults<Day> days = realm.where(Day.class).findAll();
 
-        HashMap<String, Double> map = new HashMap<>();
+        HashMap<String, Float> map = new HashMap<>();
 
         for (Day d:days
              ) {
             RealmList<DayPair> pairs = d.getList();
             for (DayPair pair:pairs
                  ) {
-                if(map.containsKey(pair.getProduct().getCategory().getName())){
-                    double sum = map.get(pair.getProduct().getCategory().getName());
+                String key = pair.getProduct().getCategory().getName();
+                if(key.length()==0){
+                    key = "Без категории";
+                }
+                if(map.containsKey(key)){
+                    float sum = map.get(pair.getProduct().getCategory().getName());
                     sum += pair.getPrice();
-                    map.put(pair.getProduct().getCategory().getName(), sum);
+                    map.put(key, sum);
                 } else {
-                    map.put(pair.getProduct().getCategory().getName(), pair.getPrice());
+                    map.put(key, pair.getPrice());
                 }
             }
         }
 
+        for (Map.Entry entry : map.entrySet()) {
+            list.add(new Pair<>((String) entry.getKey(), (Float) entry.getValue()));
+        }
+
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
 
-        for (Map.Entry entry : map.entrySet()) {
-
-           double d = (Double) entry.getValue();
-            Log.i("TAG21", "d - " + d + " name - " + entry.getKey());
-            yVals1.add(new PieEntry((float) d, (String) entry.getKey()));
+        for (Pair p:list
+             ) {
+            yVals1.add(new PieEntry((float) p.second, (String) p.first));
         }
 
         // create pie data set
@@ -221,5 +245,19 @@ public class DiagramActivity extends AppCompatActivity {
 
         // update pie chart
         mChart.invalidate();
+    }
+
+    @OnClick(R.id.changeView)
+    public void changeView(View v){
+        Log.i("TAG21", "cl");
+
+        if(recyclerView.getVisibility()==View.VISIBLE){
+            recyclerView.setVisibility(View.GONE);
+            mChart.setVisibility(View.VISIBLE);
+        }
+        else {
+            recyclerView.setVisibility(View.VISIBLE);
+            mChart.setVisibility(View.GONE);
+        }
     }
 }

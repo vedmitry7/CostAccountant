@@ -7,10 +7,11 @@ public class Product extends RealmObject {
 
     @PrimaryKey
     String name;
-    Double defPrice;
+    float defPrice;
     boolean useDefPrice;
     Category category;
     String categoryName;
+    String categoryName1;
 
     public String getCategoryName() {
         return categoryName;
@@ -28,11 +29,11 @@ public class Product extends RealmObject {
         this.name = name;
     }
 
-    public Double getDefPrice() {
+    public float getDefPrice() {
         return defPrice;
     }
 
-    public void setDefPrice(Double defPrice) {
+    public void setDefPrice(float defPrice) {
         this.defPrice = defPrice;
     }
 

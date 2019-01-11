@@ -5,12 +5,12 @@ import io.realm.RealmObject;
 public class DayPair extends RealmObject {
 
     Product product;
-    Double price;
+    float price;
 
     public DayPair() {
     }
 
-    public DayPair(Product product, Double price) {
+    public DayPair(Product product, float price) {
         this.product = product;
         this.price = price;
     }
@@ -23,11 +23,11 @@ public class DayPair extends RealmObject {
         this.product = product;
     }
 
-    public Double getPrice() {
+    public float getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(float price) {
         this.price = price;
     }
 }
