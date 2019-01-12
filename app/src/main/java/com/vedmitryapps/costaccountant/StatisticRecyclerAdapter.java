@@ -57,6 +57,8 @@ public class StatisticRecyclerAdapter extends RecyclerView.Adapter<StatisticRecy
 
     public void update(ArrayList<Pair<String, Float>> list){
         this.list = list;
+        percentValueList = Util.getPercent(list);
+        notifyDataSetChanged();
     }
 
 

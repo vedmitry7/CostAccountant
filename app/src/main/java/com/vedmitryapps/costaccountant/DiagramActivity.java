@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -114,9 +115,6 @@ public class DiagramActivity extends AppCompatActivity {
             public void onValueSelected(Entry e, Highlight h) {
                 if (e == null)
                     return;
-
-                period.setText("x - " + e.getY() + " " + (String) e.getData());
-
                 Toast.makeText(DiagramActivity.this,
                         xData[(int)e.getX()] + " = " + e.getData() + "%", Toast.LENGTH_SHORT).show();
             }
@@ -146,10 +144,12 @@ public class DiagramActivity extends AppCompatActivity {
         mChart.invalidate();
         mChart.refreshDrawableState();
 
-        // add data
-        addData();
-
         initRecycler();
+        // add data
+        //addData(realm.where(Day.class).findAll());
+        currentMonth();
+
+        period.setText("Текущий месяц");
     }
 
     private void initRecycler() {
@@ -158,9 +158,8 @@ public class DiagramActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private void addData() {
+    private void addData(List<Day> days) {
 
-        RealmResults<Day> days = realm.where(Day.class).findAll();
 
         HashMap<String, Float> map = new HashMap<>();
 
@@ -182,6 +181,9 @@ public class DiagramActivity extends AppCompatActivity {
                 }
             }
         }
+
+        if(list!=null)
+            list.clear();
 
         for (Map.Entry entry : map.entrySet()) {
             list.add(new Pair<>((String) entry.getKey(), (Float) entry.getValue()));
@@ -242,13 +244,12 @@ public class DiagramActivity extends AppCompatActivity {
 
         mChart.setData(data);
 
-
 /*        Highlight[] highlights = new Highlight[1];
         highlights [0] =  new Highlight(5, 7, 0);*/
 
         // undo all highlights
         mChart.highlightValues(null);
-
+        mChart.notifyDataSetChanged();
         // update pie chart
         mChart.invalidate();
     }
@@ -275,7 +276,7 @@ public class DiagramActivity extends AppCompatActivity {
 
         final ArrayList<String> list = new ArrayList<>();
 
-        PopupMenu popupMenu = new PopupMenu(this, v);
+        PopupMenu popupMenu = new PopupMenu(this, period);
         final Calendar calendar = Calendar.getInstance();
         popupMenu.inflate(R.menu.popup);
 
@@ -288,10 +289,14 @@ public class DiagramActivity extends AppCompatActivity {
                     case R.id.today:
                         Log.i("TAG21", dateFormat.format(calendar.getTime()));
                         list.add(dateFormat.format(calendar.getTime()));
+                        updatePairList(list);
+                        period.setText("Сегодня");
                         break;
                     case R.id.yesterday:
                         calendar.add(Calendar.DAY_OF_MONTH, -1);
                         list.add(dateFormat.format(calendar.getTime()));
+                        updatePairList(list);
+                        period.setText("Вчера");
                         break;
                     case R.id.lastSevenDays:
                         list.add(dateFormat.format(calendar.getTime()));
@@ -300,6 +305,8 @@ public class DiagramActivity extends AppCompatActivity {
                             list.add(dateFormat.format(calendar.getTime()));
                             Log.i("TAG21", dateFormat.format(calendar.getTime()));
                         }
+                        updatePairList(list);
+                        period.setText("Последние 7 дней");
                         break;
                     case R.id.lastMonth:
                         calendar.add(Calendar.MONTH, -1);
@@ -310,6 +317,9 @@ public class DiagramActivity extends AppCompatActivity {
                             list.add(dateFormat.format(calendar.getTime()));
                             Log.i("TAG21", dateFormat.format(calendar.getTime()));
                         }
+                        updatePairList(list);
+                        period.setText("В прошлом месяце");
+
                         break;
                     case R.id.lastThirtyDays:
                         list.add(dateFormat.format(calendar.getTime()));
@@ -317,10 +327,13 @@ public class DiagramActivity extends AppCompatActivity {
                             calendar.add(Calendar.DAY_OF_MONTH, -1);
                             list.add(dateFormat.format(calendar.getTime()));
                             Log.i("TAG21", dateFormat.format(calendar.getTime()));
+                            updatePairList(list);
                         }
+                        period.setText("Последние 30 дней");
                         break;
                     case R.id.allTime:
-
+                        updatePairList(null);
+                        period.setText("Весь период");
                         break;
                     case R.id.currentMonth:
                         int days =  calendar.get(Calendar.DAY_OF_MONTH);
@@ -333,9 +346,9 @@ public class DiagramActivity extends AppCompatActivity {
                             list.add(dateFormat.format(calendar.getTime()));
                             Log.i("TAG21", dateFormat.format(calendar.getTime()));
                         }
+                        updatePairList(list);
+                        period.setText("Текущий месяц");
                         break;
-
-
                 }
                 return false;
             }
@@ -344,17 +357,40 @@ public class DiagramActivity extends AppCompatActivity {
         popupMenu.show();
     }
 
+    private void currentMonth(){
+        final ArrayList<String> list = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
+        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        int days =  calendar.get(Calendar.DAY_OF_MONTH);
+
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        list.add(dateFormat.format(calendar.getTime()));
+
+        for (int i = 1; i < days; i++) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            list.add(dateFormat.format(calendar.getTime()));
+            Log.i("TAG21", dateFormat.format(calendar.getTime()));
+        }
+        updatePairList(list);
+    }
+
 
     public void updatePairList(ArrayList<String> list){
 
+        if(list == null){
+            addData(realm.where(Day.class).findAll());
+            return;
+        }
         ArrayList<Day> days = new ArrayList<>();
         for (String s:list
              ) {
             Day day = realm.where(Day.class).equalTo("id", s).findFirst();
-
             if(day!=null){
                 days.add(day);
             }
         }
+        addData(days);
+        adapter.update(this.list);
+
     }
 }
