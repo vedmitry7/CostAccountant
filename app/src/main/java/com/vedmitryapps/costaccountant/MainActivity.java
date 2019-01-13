@@ -1,5 +1,6 @@
 package com.vedmitryapps.costaccountant;
 
+import android.app.DatePickerDialog;
 import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -396,6 +398,23 @@ public class MainActivity extends AppCompatActivity {
 
         b.show();
         showKeyboard();
+    }
+
+    @OnClick(R.id.shooseDate)
+    public void shooseDate(View v){
+
+        DatePickerDialog.OnDateSetListener myCallBack = new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                dateText = dayOfMonth+"."+(monthOfYear+1)+"."+year;
+                Log.i("TAG21", "day  " + dateText);
+                initDay();
+              //  tvDate.setText("Today is " + myDay + "/" + myMonth + "/" + myYear);
+            }
+        };
+        DatePickerDialog tpd = new DatePickerDialog(this, myCallBack, 2018, 11, 30);
+        tpd.show();
     }
 
     public void closeKeyboard(){

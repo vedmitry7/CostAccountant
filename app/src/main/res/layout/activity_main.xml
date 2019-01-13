@@ -16,10 +16,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:text="2418456"
-        android:textSize="20dp"
         android:textColor="@android:color/black"
+        android:textSize="20dp"
         app:layout_constraintEnd_toStartOf="@+id/imageButton3"
-        app:layout_constraintStart_toEndOf="@+id/leftButton"
+        app:layout_constraintStart_toEndOf="@+id/shooseDate"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
@@ -128,5 +128,16 @@
             tools:ignore="MissingConstraints" />
 
     </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/shooseDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintStart_toEndOf="@+id/leftButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_calendar" />
 
 </android.support.constraint.ConstraintLayout>
