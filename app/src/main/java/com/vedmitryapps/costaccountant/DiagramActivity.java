@@ -1,12 +1,15 @@
 package com.vedmitryapps.costaccountant;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -348,6 +351,23 @@ public class DiagramActivity extends AppCompatActivity {
                         }
                         updatePairList(list);
                         period.setText("Текущий месяц");
+                        break;
+                    case R.id.custom:
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DiagramActivity.this);
+                        //dialogBuilder.setTitle("Трата");
+                        LayoutInflater inflater = (LayoutInflater) DiagramActivity.this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                        final View dialogView = inflater.inflate(R.layout.choose_custom_term_dialog, null);
+
+                        dialogBuilder.setView(dialogView);
+
+                        dialogBuilder.setPositiveButton("Ок", null);
+                        dialogBuilder.setNegativeButton("Отмена", null);
+
+                        dialogBuilder.setCancelable(false);
+
+                        final AlertDialog b = dialogBuilder.create();
+                        b.show();
+
                         break;
                 }
                 return false;

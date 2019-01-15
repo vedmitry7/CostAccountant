@@ -5,6 +5,7 @@ import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputLayout;
@@ -26,11 +27,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.github.badoualy.datepicker.DatePickerTimeline;
+import com.github.badoualy.datepicker.MonthView;
+import com.github.badoualy.datepicker.TimelineView;
+import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
@@ -69,6 +75,12 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
 
+    @BindView(R.id.datePickerTimeline)
+    DatePickerTimeline timeLine;
+
+    @BindView(R.id.calendarView)
+   CollapsibleCalendar  viewCalendar;
+
     Calendar calendar = Calendar.getInstance();
     String dateText;
 
@@ -96,6 +108,56 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        timeLine.setDateLabelAdapter(new MonthView.DateLabelAdapter() {
+            @Override
+            public CharSequence getLabel(Calendar calendar, int index) {
+               // return Integer.toString(calendar.get(Calendar.MONTH) + 1) + "/" + (calendar.get(Calendar.YEAR) % 2000);
+                return "250";
+            }
+        });
+
+        timeLine.setOnDateSelectedListener(new DatePickerTimeline.OnDateSelectedListener() {
+            @Override
+            public void onDateSelected(int year, int month, int day, int index) {
+                Log.d("TAG21", "y"+year+"m"+month+"d"+day+"i"+index);
+
+
+            }
+        });
+
+
+        final CollapsibleCalendar collapsibleCalendar = findViewById(R.id.calendarView);
+        collapsibleCalendar.setShowWeek(false);
+        collapsibleCalendar.callOnClick();
+        collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
+            @Override
+            public void onDaySelect() {
+                com.shrikanthravi.collapsiblecalendarview.data.Day day = viewCalendar.getSelectedDay();
+                Log.i("TAG21", "Selected Day: "
+                        + day.getYear() + "/" + (day.getMonth() + 1) + "/" + day.getDay());
+            }
+
+            @Override
+            public void onItemClick(View view) {
+
+            }
+
+            @Override
+            public void onDataUpdate() {
+
+            }
+
+            @Override
+            public void onMonthChange() {
+
+            }
+
+            @Override
+            public void onWeekChange(int i) {
+
+            }
+        });
     }
 
     private void initDay() {
@@ -415,7 +477,23 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     @OnClick(R.id.shooseDate)
     public void shooseDate(View v){
 
-        DatePickerDialog.OnDateSetListener myCallBack = new DatePickerDialog.OnDateSetListener() {
+
+        /* AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DiagramActivity.this);
+                        //dialogBuilder.setTitle("Трата");
+                        LayoutInflater inflater = (LayoutInflater) DiagramActivity.this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                        final View dialogView = inflater.inflate(R.layout.choose_custom_term_dialog, null);
+
+                        dialogBuilder.setView(dialogView);
+
+                        dialogBuilder.setPositiveButton("Ок", null);
+                        dialogBuilder.setNegativeButton("Отмена", null);
+
+                        dialogBuilder.setCancelable(false);
+
+                        final AlertDialog b = dialogBuilder.create();
+                        b.show();*/
+
+      /*  DatePickerDialog.OnDateSetListener myCallBack = new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
@@ -426,7 +504,23 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             }
         };
         DatePickerDialog tpd = new DatePickerDialog(this, myCallBack, 2018, 11, 30);
-        tpd.show();
+        tpd.show();*/
+
+        final Calendar cal = Calendar.getInstance();
+        int mYear = cal.get(Calendar.YEAR);
+        int mMonth = cal.get(Calendar.MONTH);
+        int mDay = cal.get(Calendar.DAY_OF_MONTH);
+
+        // инициализируем диалог выбора даты текущими значениями
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        String editTextDateParam = dayOfMonth + "." + (monthOfYear + 1) + "." + year;
+                    }
+                }, mYear, mMonth, mDay);
+
+        datePickerDialog.show();
     }
 
     public void closeKeyboard(){
