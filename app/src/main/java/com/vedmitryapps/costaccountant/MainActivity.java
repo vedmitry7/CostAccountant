@@ -5,7 +5,10 @@ import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -48,7 +52,7 @@ import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener{
 
     @BindView(R.id.dateTextView)
     TextView dateTextView;
@@ -58,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
+    @BindView(R.id.navigationView)
+    NavigationView navigationView;
+
+    @BindView(R.id.drawerLayout)
+    DrawerLayout drawerLayout;
 
     Calendar calendar = Calendar.getInstance();
     String dateText;
@@ -84,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
+
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void initDay() {
@@ -433,5 +445,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.statistic:
+                Intent intent = new Intent(this, DiagramActivity.class);
+                startActivity(intent);
+                drawerLayout.closeDrawer(navigationView);
+                break;
+
+        }
+        return true;
     }
 }
