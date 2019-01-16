@@ -1,6 +1,7 @@
 package com.vedmitryapps.costaccountant;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -360,10 +362,72 @@ public class DiagramActivity extends AppCompatActivity {
 
                         dialogBuilder.setView(dialogView);
 
-                        dialogBuilder.setPositiveButton("Ок", null);
                         dialogBuilder.setNegativeButton("Отмена", null);
 
                         dialogBuilder.setCancelable(false);
+
+                        DatePicker startDatePicker = dialogView.findViewById(R.id.startDatePicker);
+                        DatePicker endDatePicker = dialogView.findViewById(R.id.endDatePicker);
+
+                        int year = calendar.get(Calendar.YEAR);
+                        int month = calendar.get(Calendar.MONTH);
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+                        final Calendar calendarStart = Calendar.getInstance();
+                        final Calendar calendarStart2 = Calendar.getInstance();
+                        final Calendar calendarEnd = Calendar.getInstance();
+
+                        dialogBuilder.setPositiveButton("Ок", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                if(calendarEnd.getTime().after(calendarStart2.getTime())){
+                                    list.add(dateFormat.format(calendarStart.getTime()));
+                                    for (;true;) {
+                                        calendarStart.add(Calendar.DAY_OF_MONTH, 1);
+                                        list.add(dateFormat.format(calendarStart.getTime()));
+                                        Log.i("TAG21", dateFormat.format(calendarStart.getTime()));
+
+                                        if(calendarStart.get(Calendar.DAY_OF_MONTH)==calendarEnd.get(Calendar.DAY_OF_MONTH)
+                                                && calendarStart.get(Calendar.MONTH)==calendarEnd.get(Calendar.MONTH)
+                                                && calendarStart.get(Calendar.YEAR)==calendarEnd.get(Calendar.YEAR)){
+                                            Log.i("TAG21", "Stop cycle");
+                                            break;
+                                        }
+                                    }
+
+                                    updatePairList(list);
+                                    period.setText(dateFormat.format(calendarStart2.getTime()) + " - " + dateFormat.format(calendarEnd.getTime()));
+                                } else {
+                                    if(calendarStart.get(Calendar.DAY_OF_MONTH)==calendarEnd.get(Calendar.DAY_OF_MONTH)
+                                            && calendarStart.get(Calendar.MONTH)==calendarEnd.get(Calendar.MONTH)
+                                            && calendarStart.get(Calendar.YEAR)==calendarEnd.get(Calendar.YEAR)){
+                                        Log.i("TAG21", "Add one day");
+                                        list.add(dateFormat.format(calendarStart.getTime()));
+                                        updatePairList(list);
+                                        period.setText(dateFormat.format(calendarStart2.getTime()) + " - " + dateFormat.format(calendarEnd.getTime()));
+
+                                    } else {
+                                        Toast.makeText(DiagramActivity.this, "Неверный формат дат", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }
+                        });
+
+                        startDatePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
+                            @Override
+                            public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                                calendarStart.set(i,i1,i2);
+                                calendarStart2.set(i,i1,i2);
+                            }
+                        });
+
+                        endDatePicker.init(year, month, day, new DatePicker.OnDateChangedListener() {
+                            @Override
+                            public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                                calendarEnd.set(i,i1,i2);
+                            }
+                        });
 
                         final AlertDialog b = dialogBuilder.create();
                         b.show();
