@@ -7,18 +7,18 @@
 
     <com.github.badoualy.datepicker.DatePickerTimeline
         android:id="@+id/datePickerTimeline"
-        android:visibility="gone"
-        app:mti_primaryDarkColor="#222222"
-        app:mti_tabSelectedColor="#ff00ff"
-        app:mti_primaryColor="#ffffff"
-        app:mti_lblDateSelectedColor="#ff0000"
-        app:mti_tabBeforeSelectionColor="#222222"
-        app:mti_bgLblDateSelectedColor="#00ff00"
-        app:mti_lblDateColor="#000000"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:mti_bgLblDateSelectedColor="#00ff00"
+        app:mti_lblDateColor="#000000"
+        app:mti_lblDateSelectedColor="#ff0000"
+        app:mti_primaryColor="#ffffff"
+        app:mti_primaryDarkColor="#222222"
+        app:mti_tabBeforeSelectionColor="#222222"
+        app:mti_tabSelectedColor="#ff00ff" />
 
     <com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar
         android:id="@+id/calendarView"
@@ -30,11 +30,11 @@
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:text="2418456"
         android:textColor="@android:color/black"
         android:textSize="20dp"
@@ -46,8 +46,8 @@
         android:id="@+id/leftButton"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/ic_left"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,9 +57,9 @@
         android:id="@+id/rightButton"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/ic_right"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -107,9 +107,9 @@
         android:id="@+id/imageButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/ic_chart_line"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintTop_toTopOf="parent" />
@@ -119,9 +119,8 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintTop_toBottomOf="@+id/calendarView"
+        app:layout_constraintTop_toBottomOf="@+id/daysRecyclerView"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -160,5 +159,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_calendar"
         tools:ignore="VectorDrawableCompat" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/daysRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calendarView"
+        tools:ignore="MissingConstraints" />
 
 </android.support.constraint.ConstraintLayout>

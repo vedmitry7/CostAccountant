@@ -1,6 +1,7 @@
 package com.vedmitryapps.costaccountant;
 
 
+import android.content.Intent;
 import android.util.Log;
 import android.util.Pair;
 
@@ -22,11 +23,11 @@ public class Util {
         return result;
     }
 
-    public static double countDayPrice(Day day){
+    public static float countDayPrice(Day day){
 
         RealmList<DayPair> pairs = day.getList();
 
-        Double sum = 0d;
+        float sum = 0;
         for (DayPair p:pairs
              ) {
             sum += p.getPrice();
@@ -55,5 +56,33 @@ public class Util {
         }
 
         return strings;
+    }
+
+
+    public static String returnDayByDate(String s){
+
+        String result = s.substring(0, 2);
+        if(result.startsWith("0")){
+            result = result.substring(1,2);
+        }
+        return result;
+    }
+
+    public static int year(String s){
+
+        String result = s.substring(6);
+        return Integer.parseInt(result);
+    }
+
+    public static int month(String s){
+
+        String result = s.substring(3,5);
+        return Integer.parseInt(result);
+    }
+
+    public static int day(String s){
+
+        String result = s.substring(0,2);
+        return Integer.parseInt(result);
     }
 }

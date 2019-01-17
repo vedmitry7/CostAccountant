@@ -69,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
+    @BindView(R.id.daysRecyclerView)
+    RecyclerView daysRcyclerView;
+
     @BindView(R.id.navigationView)
     NavigationView navigationView;
 
@@ -79,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     DatePickerTimeline timeLine;
 
     @BindView(R.id.calendarView)
-   CollapsibleCalendar  viewCalendar;
+    CollapsibleCalendar  viewCalendar;
 
     Calendar calendar = Calendar.getInstance();
     String dateText;
@@ -89,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     Day day;
 
     SpendingRecyclerAdapter adapter;
+    DaysRecyclerAdapter daysAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +109,15 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+
+
+        daysAdapter = new DaysRecyclerAdapter();
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        daysRcyclerView.setLayoutManager(layoutManager);
+        daysRcyclerView.setHasFixedSize(true);
+        daysRcyclerView.setAdapter(daysAdapter);
+        daysRcyclerView.scrollToPosition(27);
 
 
         navigationView.setNavigationItemSelectedListener(this);
@@ -170,7 +183,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             realm.commitTransaction();
         }
         dayCount.setText("Всего: " + Util.countDayPrice(day));
-
     }
 
     private void showDate(){
