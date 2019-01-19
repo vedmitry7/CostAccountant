@@ -12,4 +12,18 @@ public class Events {
             return position;
         }
     }
+
+    public static class ClickDay {
+        private final String dayId;
+
+        public ClickDay(String position) {
+            this.dayId = position;
+        }
+
+        public String getDayId() {
+            return dayId;
+        }
+    }
+
+
 }

@@ -65,7 +65,7 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
 
     // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         holder.dayOfMonth.setText(Util.returnDayByDate(list.get(position)));
 
@@ -91,8 +91,14 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
         if(day == null){
             holder.daySpending.setText("");
         } else {
-            holder.daySpending.setText(String.valueOf(Util.countDayPrice(day)));
+            float f = Util.countDayPrice(day);
+            if(f!=0){
+                holder.daySpending.setText(String.valueOf(f));
+            } else {
+                holder.daySpending.setText("");
+            }
         }
+
     }
 
     // total number of rows
@@ -130,8 +136,10 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    EventBus.getDefault().post(new Events.ClickDay(list.get(getAdapterPosition())));
                     choosenItem = getAdapterPosition();
                     notifyDataSetChanged();
+
                 }
             });
         }

@@ -103,12 +103,13 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         realm = Realm.getDefaultInstance();
 
         showDate();
-        initDay();
 
         adapter = new SpendingRecyclerAdapter(day);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+
+        initDay(dateText);
 
 
         daysAdapter = new DaysRecyclerAdapter();
@@ -173,16 +174,23 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         });
     }
 
-    private void initDay() {
-        day = realm.where(Day.class).equalTo("id", dateText).findFirst();
+    private void initDay(String dayId) {
+        day = realm.where(Day.class).equalTo("id", dayId).findFirst();
         if(day==null){
             Log.d("TAG21", dateText + " is null. create...");
-
+            Log.d("TAG21", "beginTransaction()");
             realm.beginTransaction();
-            day = realm.createObject(Day.class, dateText);
+            day = realm.createObject(Day.class, dayId);
+            Log.d("TAG21", "commitTransaction()");
             realm.commitTransaction();
         }
+
+
+        adapter.update(day);
         dayCount.setText("Всего: " + Util.countDayPrice(day));
+
+        dateTextView.setText(day.getId());
+
     }
 
     private void showDate(){
@@ -191,24 +199,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         dateText = dateFormat.format(date);
         dateTextView.setText(dateText);
     }
-
-    @OnClick(R.id.rightButton)
-    public void right(View v){
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        showDate();
-        initDay();
-        adapter.update(day);
-    }
-
-    @OnClick(R.id.leftButton)
-    public void left(View v){
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-        showDate();
-        initDay();
-        adapter.update(day);
-
-    }
-
 
     @OnClick(R.id.imageButton3)
     public void imageButton3(View v){
@@ -225,6 +215,11 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     @OnClick(R.id.bottomButton)
     public void bottomButton(View v){
         showCreateOrChangeDialog(null);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void clickDay(final Events.ClickDay event) {
+        initDay(event.getDayId());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -477,6 +472,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                         b.dismiss();
                         closeKeyboard();
                         adapter.notifyDataSetChanged();
+                        daysAdapter.notifyDataSetChanged();
                     }
                 });
             }
