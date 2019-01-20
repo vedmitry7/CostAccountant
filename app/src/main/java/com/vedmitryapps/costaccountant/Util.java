@@ -7,12 +7,14 @@ import android.util.Pair;
 
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
+import com.vedmitryapps.costaccountant.models.Product;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
@@ -77,12 +79,39 @@ public class Util {
     public static int month(String s){
 
         String result = s.substring(3,5);
-        return Integer.parseInt(result);
+        return Integer.parseInt(result)-1;
     }
 
     public static int day(String s){
 
         String result = s.substring(0,2);
         return Integer.parseInt(result);
+    }
+
+
+    public static long getNextProductId(Realm mRealm) {
+        try {
+            Number number = mRealm.where(Product.class).max("id");
+            if (number != null) {
+                return number.longValue() + 1;
+            } else {
+                return 0;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return 0;
+        }
+    }
+
+    public static long getNextDayPairId(Realm mRealm) {
+        try {
+            Number number = mRealm.where(DayPair.class).max("id");
+            if (number != null) {
+                return number.longValue() + 1;
+            } else {
+                return 0;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return 0;
+        }
     }
 }

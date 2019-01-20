@@ -6,12 +6,22 @@ import io.realm.annotations.PrimaryKey;
 public class Product extends RealmObject {
 
     @PrimaryKey
+    long id;
+
     String name;
     float defPrice;
     boolean useDefPrice;
     Category category;
     String categoryName;
     String categoryName1;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getCategoryName() {
         return categoryName;

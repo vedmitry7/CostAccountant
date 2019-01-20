@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -109,6 +110,39 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
 
     public void update(Day day) {
         notifyDataSetChanged();
+    }
+
+    public void addEndDays() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Util.year(list.get(list.size()-1)), Util.month(list.get(list.size()-1)), Util.day(list.get(list.size()-1)));
+
+        for (int i = 0; i < 30; i++) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            list.add( dateFormat.format(calendar.getTime()));
+
+        }
+        notifyDataSetChanged();
+
+        Log.d("TAG21", "size - " + list.size());
+
+        for (int i = 0; i < list.size(); i++) {
+            Log.d("TAG21", list.get(i));
+        }
+    }
+
+    public void addStartDays() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Util.year(list.get(list.size()-1)), Util.month(list.get(list.size()-1)), Util.day(list.get(list.size()-1)));
+
+        calendar.add(Calendar.DAY_OF_MONTH, -list.size());
+
+        for (int i = 0; i < 30; i++) {
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            list.add(0, dateFormat.format(calendar.getTime()));
+            Log.d("TAG21", "add - " + dateFormat.format(calendar.getTime()));
+        }
+        currentDayPos+=30;
+        notifyItemRangeInserted(0, 30);
     }
 
     // stores and recycles views as they are scrolled off screen

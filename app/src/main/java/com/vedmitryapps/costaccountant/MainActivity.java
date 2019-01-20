@@ -1,11 +1,9 @@
 package com.vedmitryapps.costaccountant;
 
 import android.app.DatePickerDialog;
-import android.app.usage.UsageEvents;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputLayout;
@@ -27,16 +25,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.github.badoualy.datepicker.DatePickerTimeline;
-import com.github.badoualy.datepicker.MonthView;
-import com.github.badoualy.datepicker.TimelineView;
-import com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar;
 import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
@@ -78,12 +71,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
 
-    @BindView(R.id.datePickerTimeline)
-    DatePickerTimeline timeLine;
-
-    @BindView(R.id.calendarView)
-    CollapsibleCalendar  viewCalendar;
-
     Calendar calendar = Calendar.getInstance();
     String dateText;
 
@@ -93,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     SpendingRecyclerAdapter adapter;
     DaysRecyclerAdapter daysAdapter;
+
+    boolean b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,65 +102,47 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
 
         daysAdapter = new DaysRecyclerAdapter();
-        LinearLayoutManager layoutManager
+        final LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         daysRcyclerView.setLayoutManager(layoutManager);
-        daysRcyclerView.setHasFixedSize(true);
+
         daysRcyclerView.setAdapter(daysAdapter);
         daysRcyclerView.scrollToPosition(27);
 
 
+        daysRcyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+
+                int first = layoutManager.findFirstVisibleItemPosition();
+                int last = layoutManager.findLastVisibleItemPosition();
+                Log.d("TAG21", "first - " + first);
+                Log.d("TAG21", "last - " + last);
+                Log.d("TAG21", "count - " + layoutManager.getItemCount());
+
+                int total = layoutManager.getItemCount();
+
+
+                if(total - last <10){
+                    Log.d("TAG21", "add days end - ");
+                    daysAdapter.addEndDays();
+                }
+
+
+                if(first <10){
+                    Log.d("TAG21", "add days first - ");
+                    daysAdapter.addStartDays();
+                    if(!b){
+                        b = true;
+                    }
+                }
+
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+
         navigationView.setNavigationItemSelectedListener(this);
-
-        timeLine.setDateLabelAdapter(new MonthView.DateLabelAdapter() {
-            @Override
-            public CharSequence getLabel(Calendar calendar, int index) {
-               // return Integer.toString(calendar.get(Calendar.MONTH) + 1) + "/" + (calendar.get(Calendar.YEAR) % 2000);
-                return "250";
-            }
-        });
-
-        timeLine.setOnDateSelectedListener(new DatePickerTimeline.OnDateSelectedListener() {
-            @Override
-            public void onDateSelected(int year, int month, int day, int index) {
-                Log.d("TAG21", "y"+year+"m"+month+"d"+day+"i"+index);
-
-
-            }
-        });
-
-
-        final CollapsibleCalendar collapsibleCalendar = findViewById(R.id.calendarView);
-        collapsibleCalendar.setShowWeek(false);
-        collapsibleCalendar.callOnClick();
-        collapsibleCalendar.setCalendarListener(new CollapsibleCalendar.CalendarListener() {
-            @Override
-            public void onDaySelect() {
-                com.shrikanthravi.collapsiblecalendarview.data.Day day = viewCalendar.getSelectedDay();
-                Log.i("TAG21", "Selected Day: "
-                        + day.getYear() + "/" + (day.getMonth() + 1) + "/" + day.getDay());
-            }
-
-            @Override
-            public void onItemClick(View view) {
-
-            }
-
-            @Override
-            public void onDataUpdate() {
-
-            }
-
-            @Override
-            public void onMonthChange() {
-
-            }
-
-            @Override
-            public void onWeekChange(int i) {
-
-            }
-        });
     }
 
     private void initDay(String dayId) {
@@ -443,14 +414,16 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
                         realm.beginTransaction();
                         if(p==null){
-                            p = realm.createObject(Product.class, Util.getTrimString(productNameEditText.getText().toString()));
+                            p = realm.createObject(Product.class, Util.getNextProductId(realm));
+                        } else {
+                            p = realm.createObject(Product.class, Util.getNextProductId(realm));
                         }
 
                         if(c==null){
                             c = realm.createObject(Category.class, Util.getTrimString(categoryNameEditText.getText().toString()));
                         }
                         Log.i("TAG21", "category - " + c.getName());
-
+                        p.setName(Util.getTrimString(productNameEditText.getText().toString()));
                         p.setCategory(c);
                         p.setCategoryName(c.getName());
                         p.setUseDefPrice(rememberPriceCheckBox.isChecked());
@@ -460,10 +433,18 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                             //p.setDefPrice();
                         }
                         if(event!=null){
-                            day.getList().add(event.getPosition(), new DayPair(p, price));
+                            DayPair pair = new DayPair();
+                            pair.setId(Util.getNextDayPairId(realm));
+                            pair.setProduct(p);
+                            pair.setPrice(price);
+                            day.getList().add(event.getPosition(), pair);
                             day.getList().remove(event.getPosition()+1);
                         } else {
-                            day.getList().add(new DayPair(p, price));
+                            DayPair pair = new DayPair();
+                            pair.setId(Util.getNextDayPairId(realm));
+                            pair.setProduct(p);
+                            pair.setPrice(price);
+                            day.getList().add(pair);
                         }
                         realm.commitTransaction();
 
