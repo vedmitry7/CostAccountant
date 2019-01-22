@@ -34,6 +34,7 @@ import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
+import com.vedmitryapps.costaccountant.models.UniqProduct;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     @OnClick(R.id.bottomButton)
     public void bottomButton(View v){
-        showCreateOrChangeDialog(null);
+        showCreateOrChangeDialog2(null);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -193,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         initDay(event.getDayId());
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showCreateOrChangeDialog(final Events.ClickProduct event) {
+
+   /* public void showCreateOrChangeDialog42(final Events.ClickProduct event) {
 
         final boolean[] categoryWasFilledFirst = {false};
 
@@ -237,10 +238,10 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             }
         });
 
-        final RealmResults<Product> products = realm.where(Product.class).findAll();
+        final RealmResults<UniqProduct> products = realm.where(UniqProduct.class).findAll();
         Log.d("TAG21", "count - " + products.size());
         ArrayList<String> productsName = new ArrayList<>();
-        for (Product p:products
+        for (UniqProduct p:products
                 ) {
             productsName.add(p.getName());
         }
@@ -379,9 +380,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 rememberPriceCheckBox.setChecked(product[0].isUseDefPrice());
             }
 
-
-
-
         final AlertDialog b = dialogBuilder.create();
 
         b.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -461,7 +459,288 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         b.show();
         showKeyboard();
+    }*/
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showCreateOrChangeDialog2(final Events.ClickProduct event) {
+
+        final UniqProduct[] uniqProducts = new UniqProduct[1];
+        final boolean[] categoryWasFilledFirst = {false};
+        final Category[] category = new Category[1];
+        final Product[] product = new Product[1];
+
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        final View dialogView = inflater.inflate(R.layout.add_roduct_ialog, null);
+
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.setPositiveButton("Ok", null);
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                closeKeyboard();
+                dialog.dismiss();
+            }
+        });
+
+        /**
+         * Init Views
+         */
+        final TextInputLayout productContainer =  dialogView.findViewById(R.id.containerProductEditText);
+        final AutoCompleteTextView productNameEditText = dialogView.findViewById(R.id.productEditText);
+        final AutoCompleteTextView categoryNameEditText = dialogView.findViewById(R.id.categoryEditText);
+        final EditText priceEditText = dialogView.findViewById(R.id.priceEditText);
+        final CheckBox rememberPriceCheckBox = dialogView.findViewById(R.id.rememberPriceCheckBox);
+
+        /**
+         * Find all uniqProducts and category. Fill Spinners
+         */
+        final RealmResults<UniqProduct> products = realm.where(UniqProduct.class).findAll();
+        ArrayList<String> productsName = new ArrayList<>();
+        for (UniqProduct p:products
+                ) {
+            productsName.add(p.getName());
+        }
+        productNameEditText.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, productsName));
+
+        final RealmResults<Category> categories  = realm.where(Category.class).findAll();
+        Log.d("TAG21", "count - " + products.size());
+        ArrayList<String> categoriesName = new ArrayList<>();
+        for (Category p:categories
+                ) {
+            categoriesName.add(p.getName());
+        }
+        categoryNameEditText.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, categoriesName));
+
+        /**
+         *    Text Change Listeners
+         * */
+        productNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                uniqProducts[0] = null;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d("TAG21", "uniqProducts enter - " + s + ".");
+
+                uniqProducts[0] = realm.where(UniqProduct.class).equalTo("name", Util.getTrimString(s.toString())).findFirst();
+
+                if(uniqProducts[0]!=null){
+                    Log.d("TAG21", "Product found");
+                    // fill price!
+                    rememberPriceCheckBox.setChecked(uniqProducts[0].isUseDefPrice());
+
+                    if(uniqProducts[0].getCategory()!=null){
+                        Log.d("TAG21", "Product category found");
+                        if(event==null){
+                            if(!categoryWasFilledFirst[0])
+                                categoryNameEditText.setText(uniqProducts[0].getCategory().getName());
+                            rememberPriceCheckBox.setChecked(uniqProducts[0].isUseDefPrice());
+                            if(uniqProducts[0].isUseDefPrice()){
+                                priceEditText.setText(String.valueOf(uniqProducts[0].getDefPrice()));
+                            }
+                        }
+                    } else {
+                        Log.d("TAG21", "Product category not found");
+                    }
+                } else {
+                    Log.d("TAG21", "Product not found");
+                    if(event==null) {
+                        if(!categoryWasFilledFirst[0])
+                            categoryNameEditText.setText("");
+                    }
+                }
+            }
+        });
+
+        categoryNameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                category[0] = null;
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d("TAG21", "category enter - " + s + ".");
+
+                if(productNameEditText.getText().length() == 0){
+                    categoryWasFilledFirst[0] = true;
+                    Log.d("TAG21", "Category was filled first");
+                }
+
+                category[0] = realm.where(Category.class).equalTo("name", Util.getTrimString(s.toString())).findFirst();
+
+                if(category[0]!=null){
+                    Log.d("TAG21", "Category found");
+                    // fill price!
+                }
+            }
+        });
+
+        /**
+         *      Spinner Item Click
+         * */
+
+        productNameEditText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(uniqProducts[0]!=null && uniqProducts[0].getCategory()!=null){
+                    Log.i("TAG21", "");
+                    priceEditText.requestFocus();
+                    priceEditText.setSelection(priceEditText.getText().length());
+                } else {
+                    categoryNameEditText.requestFocus();
+                }
+            }
+        });
+
+        /**
+         *  Enter key click listener
+         * */
+
+        productNameEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    Log.i("TAG21", "Enter");
+                    if(uniqProducts[0]!=null && uniqProducts[0].getCategory()!=null){
+                        Log.i("TAG21", "");
+                        priceEditText.requestFocus();
+                        priceEditText.setSelection(priceEditText.getText().length());
+                    } else {
+                        categoryNameEditText.requestFocus();
+                    }
+                    return true;
+                }
+                return true;
+            }
+        });
+
+        categoryNameEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN
+                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    Log.i("TAG21", "Enter - " + priceEditText.getText().length());
+                    priceEditText.requestFocus();
+                    priceEditText.setSelection(priceEditText.getText().length());
+                    return true;
+                }
+                return true;
+            }
+        });
+
+
+        /**
+         *      Init here because listeners set
+         * */
+
+        if(event!=null){
+            product[0] = day.getList().get(event.getPosition()).getProduct();
+            category[0] = day.getList().get(event.getPosition()).getProduct().getCategory();
+            productNameEditText.setText(product[0].getName());
+            productNameEditText.setSelection(product[0].getName().length());
+            productNameEditText.dismissDropDown();
+            priceEditText.setText(String.valueOf(day.getList().get(event.getPosition()).getPrice()));
+            categoryNameEditText.setText(product[0].getCategory().getName());
+        }
+
+        /**
+         *      OK click listener
+         * */
+        final AlertDialog b = dialogBuilder.create();
+        b.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = ((AlertDialog) b).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        if(Util.getTrimString(productNameEditText.getText().toString()).length()==0){
+                            productContainer.setError("Поле не может быть пустым");
+                            return;
+                        }
+
+                        UniqProduct p = uniqProducts[0];
+                        Category c = category[0];
+                        float price;
+
+                        if(!priceEditText.getText().toString().equals("")){
+                            price = Float.parseFloat(priceEditText.getText().toString());
+                        } else {
+                            price = 0;
+                        }
+
+                        realm.beginTransaction();
+                        if(p==null){
+                            p = realm.createObject(UniqProduct.class, Util.getTrimString(productNameEditText.getText().toString()));
+                        }
+
+                        if(c==null){
+                            c = realm.createObject(Category.class, Util.getTrimString(categoryNameEditText.getText().toString()));
+                        }
+
+                        Log.i("TAG21", "category - " + c.getName());
+                        p.setCategory(c);
+                        p.setCategoryName(c.getName());
+                        p.setUseDefPrice(rememberPriceCheckBox.isChecked());
+                        if(rememberPriceCheckBox.isChecked()){
+                            p.setDefPrice(price);
+                        }
+
+                        DayPair pair = new DayPair();
+                        pair.setId(Util.getNextDayPairId(realm));
+
+                        Product product = realm.createObject(Product.class, Util.getNextProductId(realm));
+                        product.setName(p.getName());
+                        product.setCategory(p.getCategory());
+                        pair.setProduct(product);
+                        pair.setPrice(price);
+
+                        if(event!=null){
+                            day.getList().add(event.getPosition(), pair);
+                            day.getList().remove(event.getPosition()+1);
+                        } else {
+                            day.getList().add(pair);
+                        }
+                        realm.commitTransaction();
+
+
+                        dayCount.setText("Всего: " + Util.countDayPrice(day));
+                        b.dismiss();
+                        closeKeyboard();
+                        adapter.notifyDataSetChanged();
+                        daysAdapter.notifyDataSetChanged();
+                    }
+                });
+
+
+
+
+            }
+        });
+
+        b.show();
+        showKeyboard();
     }
+
 
     @OnClick(R.id.shooseDate)
     public void shooseDate(View v){

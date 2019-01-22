@@ -3,24 +3,15 @@ package com.vedmitryapps.costaccountant.models;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Product extends RealmObject {
+public class UniqProduct extends RealmObject {
 
     @PrimaryKey
-    long id;
-
     String name;
     float defPrice;
     boolean useDefPrice;
     Category category;
     String categoryName;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
+    String categoryName1;
 
     public String getCategoryName() {
         return categoryName;
