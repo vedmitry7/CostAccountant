@@ -818,6 +818,11 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 drawerLayout.closeDrawer(navigationView);
                 break;
 
+            case R.id.categories:
+                Intent intent1 = new Intent(this, CategoriesActivity.class);
+                startActivity(intent1);
+                drawerLayout.closeDrawer(navigationView);
+                break;
         }
         return true;
     }

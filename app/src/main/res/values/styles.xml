@@ -7,7 +7,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
     <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
         <item name="android:textColorPrimary">@color/colorBlue</item>
         <item name="android:textSize">36dp</item>
