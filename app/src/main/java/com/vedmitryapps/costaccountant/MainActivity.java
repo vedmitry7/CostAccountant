@@ -179,10 +179,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     }
 
-    public void showKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
 
     @OnClick(R.id.bottomButton)
     public void bottomButton(View v){
@@ -479,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         dialogBuilder.setCancelable(false);
         dialogBuilder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                closeKeyboard();
+                App.closeKeyboard(getApplicationContext());
                 dialog.dismiss();
             }
         });
@@ -694,7 +690,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                         }
 
                         if(c==null){
-                            c = realm.createObject(Category.class, Util.getTrimString(categoryNameEditText.getText().toString()));
+                            c = realm.createObject(Category.class, Util.getNextCategoryId(realm));
+                            c.setName(Util.getTrimString(categoryNameEditText.getText().toString()));
                         }
 
                         Log.i("TAG21", "category - " + c.getName());
@@ -725,20 +722,16 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
                         dayCount.setText("Всего: " + Util.countDayPrice(day));
                         b.dismiss();
-                        closeKeyboard();
+                        App.closeKeyboard(getApplicationContext());
                         adapter.notifyDataSetChanged();
                         daysAdapter.notifyDataSetChanged();
                     }
                 });
-
-
-
-
             }
         });
 
         b.show();
-        showKeyboard();
+        App.showKeyboard(getApplicationContext());
     }
 
 
@@ -789,11 +782,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 }, mYear, mMonth, mDay);
 
         datePickerDialog.show();
-    }
-
-    public void closeKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
 

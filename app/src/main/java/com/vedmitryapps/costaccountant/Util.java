@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.util.Pair;
 
+import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
@@ -105,6 +106,19 @@ public class Util {
     public static long getNextDayPairId(Realm mRealm) {
         try {
             Number number = mRealm.where(DayPair.class).max("id");
+            if (number != null) {
+                return number.longValue() + 1;
+            } else {
+                return 0;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return 0;
+        }
+    }
+
+    public static long getNextCategoryId(Realm realm) {
+        try {
+            Number number = realm.where(Category.class).max("id");
             if (number != null) {
                 return number.longValue() + 1;
             } else {

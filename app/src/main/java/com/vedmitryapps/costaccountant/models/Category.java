@@ -6,6 +6,7 @@ import io.realm.annotations.PrimaryKey;
 public class Category extends RealmObject {
 
     @PrimaryKey
+    long id;
     String name;
 
     public String getName() {

@@ -116,11 +116,15 @@ public class CategoriesRecyclerAdapter extends RecyclerView.Adapter<CategoriesRe
                                 container.setError("Ахуел?");
                             } else {
                                 categories.get(getAdapterPosition()).setName(editText.getText().toString());
+                                notifyItemChanged(getAdapterPosition());
                             }
                             realm.commitTransaction();
+                            App.closeKeyboard(context);
+
                         }
                     });
 
+                    App.showKeyboard(context);
                     dialogBuilder.create().show();
                 }
             });
