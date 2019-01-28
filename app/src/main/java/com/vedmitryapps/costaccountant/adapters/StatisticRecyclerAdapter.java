@@ -1,4 +1,4 @@
-package com.vedmitryapps.costaccountant;
+package com.vedmitryapps.costaccountant.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,9 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.vedmitryapps.costaccountant.models.Day;
-
-import org.greenrobot.eventbus.EventBus;
+import com.vedmitryapps.costaccountant.R;
+import com.vedmitryapps.costaccountant.Util;
 
 import java.util.ArrayList;
 

@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -27,13 +26,12 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
-import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.vedmitryapps.costaccountant.adapters.StatisticRecyclerAdapter;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
 
@@ -41,7 +39,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +48,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 
 public class DiagramActivity extends AppCompatActivity {
 
@@ -346,7 +342,7 @@ public class DiagramActivity extends AppCompatActivity {
                         calendar.set(Calendar.DAY_OF_MONTH, 1);
                         list.add(dateFormat.format(calendar.getTime()));
 
-                        for (int i = 1; i < days; i++) {
+                        for (int i = 1; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
                             calendar.add(Calendar.DAY_OF_MONTH, 1);
                             list.add(dateFormat.format(calendar.getTime()));
                             Log.i("TAG21", dateFormat.format(calendar.getTime()));
@@ -450,7 +446,7 @@ public class DiagramActivity extends AppCompatActivity {
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         list.add(dateFormat.format(calendar.getTime()));
 
-        for (int i = 1; i < days; i++) {
+        for (int i = 1; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             list.add(dateFormat.format(calendar.getTime()));
             Log.i("TAG21", dateFormat.format(calendar.getTime()));

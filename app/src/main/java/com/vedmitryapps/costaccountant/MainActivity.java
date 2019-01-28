@@ -20,7 +20,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -30,6 +29,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.vedmitryapps.costaccountant.adapters.DaysRecyclerAdapter;
+import com.vedmitryapps.costaccountant.adapters.SpendingRecyclerAdapter;
 import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
@@ -206,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         //dialogBuilder.setTitle("Трата");
         LayoutInflater inflater = (LayoutInflater) this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View dialogView = inflater.inflate(R.layout.add_roduct_ialog, null);
+        final View dialogView = inflater.inflate(R.layout.add_product_dialog, null);
 
         dialogBuilder.setView(dialogView);
 
@@ -468,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        final View dialogView = inflater.inflate(R.layout.add_roduct_ialog, null);
+        final View dialogView = inflater.inflate(R.layout.add_product_dialog, null);
 
         dialogBuilder.setView(dialogView);
         dialogBuilder.setPositiveButton("Ok", null);
@@ -809,6 +810,11 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             case R.id.categories:
                 Intent intent1 = new Intent(this, CategoriesActivity.class);
                 startActivity(intent1);
+                drawerLayout.closeDrawer(navigationView);
+                break;
+                case R.id.repeating_spending:
+                Intent intent2 = new Intent(this, RepeatingSpendingActivity.class);
+                startActivity(intent2);
                 drawerLayout.closeDrawer(navigationView);
                 break;
         }

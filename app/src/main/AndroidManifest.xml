@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".DiagramActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".CategoriesActivity"/>
+        <activity android:name=".CategoriesActivity" />
+        <activity android:name=".RepeatingSpendingActivity"></activity>
     </application>
 
 </manifest>
