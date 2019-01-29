@@ -5,6 +5,8 @@ import io.realm.annotations.PrimaryKey;
 
 public class RepeatingSpending extends RealmObject {
 
+    String type;
+
     @PrimaryKey
     long id;
     Product product;
@@ -12,5 +14,51 @@ public class RepeatingSpending extends RealmObject {
     String lastCheckDate;
     float price;
 
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getLastCheckDate() {
+        return lastCheckDate;
+    }
+
+    public void setLastCheckDate(String lastCheckDate) {
+        this.lastCheckDate = lastCheckDate;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
 }
