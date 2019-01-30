@@ -1,19 +1,13 @@
 package com.vedmitryapps.costaccountant.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.vedmitryapps.costaccountant.App;
 import com.vedmitryapps.costaccountant.R;
-import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.RepeatingSpending;
 
@@ -28,12 +22,12 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
 
     Realm realm;
 
-    RealmResults<RepeatingSpending> categories;
+    RealmResults<RepeatingSpending> list;
 
     public RepeatingSpendingRecyclerAdapter() {
         realm = Realm.getDefaultInstance();
 
-        categories = realm.where(RepeatingSpending.class).findAll();
+        list = realm.where(RepeatingSpending.class).findAll();
     }
 
     @Override
@@ -49,12 +43,13 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        holder.name.setText(list.get(position).getType());
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        return categories.size();
+        return list.size();
     }
 
     public void update(Day day) {
@@ -64,7 +59,7 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.categoryName)
+        @BindView(R.id.repeatingSpendingName)
         TextView name;
 
         ViewHolder(final View itemView) {

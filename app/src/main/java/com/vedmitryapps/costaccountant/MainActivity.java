@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     Day day;
 
+    DateFormat dateFormat;
+
     SpendingRecyclerAdapter adapter;
     DaysRecyclerAdapter daysAdapter;
 
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
+        dateFormat  = android.text.format.DateFormat.getDateFormat(getApplicationContext());
 
         showDate();
 
@@ -160,16 +163,17 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
 
         adapter.update(day);
+
+        calendar.set(Util.year(dayId), Util.month(dayId), Util.day(dayId));
         dayCount.setText("Всего: " + Util.countDayPrice(day));
 
-        dateTextView.setText(day.getId());
-
+        showDate();
     }
 
     private void showDate(){
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        Date date = calendar.getTime();
-        dateText = dateFormat.format(date);
+       // DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        dateText = dateFormat.format(calendar.getTime());
         dateTextView.setText(dateText);
     }
 

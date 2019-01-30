@@ -128,4 +128,17 @@ public class Util {
             return 0;
         }
     }
+    public static long getNextId(Realm realm, Class c) {
+        try {
+            Number number = realm.where(c).max("id");
+            if (number != null) {
+                return number.longValue() + 1;
+            } else {
+                return 0;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return 0;
+        }
+    }
+
 }
