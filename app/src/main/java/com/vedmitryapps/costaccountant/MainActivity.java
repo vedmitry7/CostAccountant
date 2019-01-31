@@ -35,6 +35,7 @@ import com.vedmitryapps.costaccountant.models.Category;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
+import com.vedmitryapps.costaccountant.models.RepeatingSpending;
 import com.vedmitryapps.costaccountant.models.UniqProduct;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,7 +46,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     RecyclerView recyclerView;
 
     @BindView(R.id.daysRecyclerView)
-    RecyclerView daysRcyclerView;
+    RecyclerView daysRecyclerView;
 
     @BindView(R.id.navigationView)
     NavigationView navigationView;
@@ -92,8 +92,10 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
+        checkRepeatingSpendings();
         dateFormat  = android.text.format.DateFormat.getDateFormat(getApplicationContext());
 
         showDate();
@@ -109,13 +111,13 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         daysAdapter = new DaysRecyclerAdapter();
         final LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        daysRcyclerView.setLayoutManager(layoutManager);
+        daysRecyclerView.setLayoutManager(layoutManager);
 
-        daysRcyclerView.setAdapter(daysAdapter);
-        daysRcyclerView.scrollToPosition(27);
+        daysRecyclerView.setAdapter(daysAdapter);
+        daysRecyclerView.scrollToPosition(27);
 
 
-        daysRcyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        daysRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
 
@@ -148,6 +150,74 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
 
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+
+
+    private void checkRepeatingSpendings() {
+        RealmResults<RepeatingSpending> spendings = realm.where(RepeatingSpending.class).findAll();
+
+        Calendar calendarStart = Calendar.getInstance();
+        Calendar calendarEnd = Calendar.getInstance();
+        Day day;
+
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+
+        Log.d("TAG21", "cHeck " + spendings.size());
+
+        for (RepeatingSpending spending:spendings
+             ) {
+
+            Log.d("TAG21", "Iteration/ " + spending.getLastCheckDate());
+            Log.d("TAG21", "Iteration/ " + spending.getStartDate());
+
+            if(spending.getLastCheckDate()==null ){
+                Log.d("TAG21", "add last check date" );
+                realm.beginTransaction();
+                spending.setLastCheckDate(spending.getStartDate());
+                realm.commitTransaction();
+            }
+
+            calendarStart.set(
+                    Util.year(spending.getLastCheckDate()),
+                    Util.month(spending.getLastCheckDate()),
+                    Util.day(spending.getLastCheckDate()));
+
+            for (;true;){
+
+                Log.d("TAG21", "inner iteration");
+
+                day = realm.where(Day.class).equalTo("id", dateFormat.format(calendarStart.getTime())).findFirst();
+                realm.beginTransaction();
+
+                if(day==null){
+                    Log.d("TAG21", dateFormat.format(calendarStart.getTime()) + " is null. create...");
+                    day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
+                }
+
+                DayPair dayPair = new DayPair();
+                dayPair.setProduct(spending.getProduct());
+                dayPair.setPrice(spending.getPrice());
+                day.getList().add(dayPair);
+
+                spending.setLastCheckDate(dateFormat.format(calendarEnd.getTime()));
+
+                realm.commitTransaction();
+
+                if(calendarStart.get(Calendar.DAY_OF_MONTH)==calendarEnd.get(Calendar.DAY_OF_MONTH)
+                        && calendarStart.get(Calendar.MONTH)==calendarEnd.get(Calendar.MONTH)
+                        && calendarStart.get(Calendar.YEAR)==calendarEnd.get(Calendar.YEAR)){
+                    Log.d("TAG21", "iteration is today/ Break");
+                    break;
+                } else {
+                    calendarStart.add(Calendar.DAY_OF_MONTH, 1);
+
+                    Log.d("TAG21", "iteration not today");
+                }
+            }
+        }
+
     }
 
     private void initDay(String dayId) {

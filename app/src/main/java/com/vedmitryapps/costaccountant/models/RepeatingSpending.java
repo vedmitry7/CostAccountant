@@ -14,6 +14,7 @@ public class RepeatingSpending extends RealmObject {
     String lastCheckDate;
     float price;
 
+
     public String getType() {
         return type;
     }

@@ -460,9 +460,12 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                                 RepeatingSpending.class,
                                 Util.getNextId(realm, RepeatingSpending.class));
 
+
+                        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
                         repeatingSpending.setProduct(product);
                         repeatingSpending.setPrice(price);
-                        repeatingSpending.setStartDate(startDateTextView.getText().toString());
+                        repeatingSpending.setStartDate(dateFormat.format(calendar.getTime()));
                         repeatingSpending.setType(s);
 
 

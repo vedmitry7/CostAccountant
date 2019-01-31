@@ -43,7 +43,11 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.name.setText(list.get(position).getType());
+        holder.type.setText(list.get(position).getType());
+        holder.product.setText(list.get(position).getProduct().getName());
+        holder.category.setText(list.get(position).getProduct().getCategory().getName());
+        holder.price.setText("" + list.get(position).getPrice());
+
     }
 
     // total number of rows
@@ -59,8 +63,14 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.repeatingSpendingName)
-        TextView name;
+        @BindView(R.id.repeatingSpendingType)
+        TextView type;
+        @BindView(R.id.product)
+        TextView product;
+        @BindView(R.id.category)
+        TextView category;
+        @BindView(R.id.price)
+        TextView price;
 
         ViewHolder(final View itemView) {
             super(itemView);
