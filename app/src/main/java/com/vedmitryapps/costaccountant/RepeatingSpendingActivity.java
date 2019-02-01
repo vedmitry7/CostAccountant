@@ -102,6 +102,8 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                 RepeatingSpendingActivity.this.hourOfDay = hourOfDay;
                 RepeatingSpendingActivity.this.minute = minute;
                 time.setText(hourOfDay + ":"+minute);
+                RepeatingSpendingActivity.this.hourOfDay = hourOfDay;
+                RepeatingSpendingActivity.this.minute = minute;
             }
         }, 9,0, true);
 
@@ -467,6 +469,8 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                         repeatingSpending.setPrice(price);
                         repeatingSpending.setStartDate(dateFormat.format(calendar.getTime()));
                         repeatingSpending.setType(s);
+                        repeatingSpending.setHours(hourOfDay);
+                        repeatingSpending.setMinutes(minute);
 
 
                         realm.commitTransaction();

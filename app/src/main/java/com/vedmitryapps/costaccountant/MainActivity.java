@@ -4,13 +4,13 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         Log.d("TAG21", "cHeck " + spendings.size());
 
         for (RepeatingSpending spending:spendings
-             ) {
+                ) {
 
             Log.d("TAG21", "Iteration/ " + spending.getLastCheckDate());
             Log.d("TAG21", "Iteration/ " + spending.getStartDate());
@@ -184,28 +184,13 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                     Util.month(spending.getLastCheckDate()),
                     Util.day(spending.getLastCheckDate()));
 
-            for (;true;){
+            calendarStart.set(Calendar.MINUTE, spending.getMinutes());
+            calendarStart.set(Calendar.HOUR_OF_DAY, spending.getHours());
 
+            for (;true;){
                 Log.d("TAG21", "inner iteration");
 
-                day = realm.where(Day.class).equalTo("id", dateFormat.format(calendarStart.getTime())).findFirst();
-                realm.beginTransaction();
-
-                if(day==null){
-                    Log.d("TAG21", dateFormat.format(calendarStart.getTime()) + " is null. create...");
-                    day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
-                }
-
-                DayPair dayPair = new DayPair();
-                dayPair.setProduct(spending.getProduct());
-                dayPair.setPrice(spending.getPrice());
-                day.getList().add(dayPair);
-
-                spending.setLastCheckDate(dateFormat.format(calendarEnd.getTime()));
-
-                realm.commitTransaction();
-
-                if(calendarStart.get(Calendar.DAY_OF_MONTH)==calendarEnd.get(Calendar.DAY_OF_MONTH)
+           /*     if(calendarStart.get(Calendar.DAY_OF_MONTH)==calendarEnd.get(Calendar.DAY_OF_MONTH)
                         && calendarStart.get(Calendar.MONTH)==calendarEnd.get(Calendar.MONTH)
                         && calendarStart.get(Calendar.YEAR)==calendarEnd.get(Calendar.YEAR)){
                     Log.d("TAG21", "iteration is today/ Break");
@@ -213,7 +198,32 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 } else {
                     calendarStart.add(Calendar.DAY_OF_MONTH, 1);
 
-                    Log.d("TAG21", "iteration not today");
+                    Log.d("TAG21", "iteration not today. cont...");
+                }*/
+
+                if(calendarStart.after(calendarEnd)){
+                    Log.d("TAG21", "last check tomorrow. Break");
+                    break;
+                } else {
+                    Log.d("TAG21", "last check before");
+                    realm.beginTransaction();
+
+                    day = realm.where(Day.class).equalTo("id", dateFormat.format(calendarStart.getTime())).findFirst();
+
+                    if(day==null){
+                        Log.d("TAG21", dateFormat.format(calendarStart.getTime()) + " is null. create...");
+                        day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
+                    }
+
+                    DayPair dayPair = new DayPair();
+                    dayPair.setProduct(spending.getProduct());
+                    dayPair.setPrice(spending.getPrice());
+                    day.getList().add(dayPair);
+
+                    Log.d("TAG21", "add day");
+                    calendarStart.add(Calendar.DAY_OF_MONTH, 1);
+                    spending.setLastCheckDate(dateFormat.format(calendarStart.getTime()));
+                    realm.commitTransaction();
                 }
             }
         }
@@ -241,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     }
 
     private void showDate(){
-       // DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        // DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
         dateText = dateFormat.format(calendar.getTime());
         dateTextView.setText(dateText);
@@ -886,7 +896,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 startActivity(intent1);
                 drawerLayout.closeDrawer(navigationView);
                 break;
-                case R.id.repeating_spending:
+            case R.id.repeating_spending:
                 Intent intent2 = new Intent(this, RepeatingSpendingActivity.class);
                 startActivity(intent2);
                 drawerLayout.closeDrawer(navigationView);
