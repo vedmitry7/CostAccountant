@@ -38,7 +38,7 @@ public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        holder.productName.setText(day.getList().get(position).getProduct().getName());
+        holder.productName.setText(day.getList().get(position).getProduct().getName() + " " + day.getList().get(position).getProduct().getId());
         holder.productPrice.setText("" + day.getList().get(position).getPrice());
 
         holder.productCategory.setText(day.getList().get(position).getProduct().getCategory().getName());

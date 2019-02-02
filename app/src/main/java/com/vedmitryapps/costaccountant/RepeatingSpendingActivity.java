@@ -161,10 +161,13 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     void showCreateDialog(final String s, final Events.ClickProduct event){
+        @BindView(R.id.checkBoxMon)
+        CheckBox mon;
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View dialogView = inflater.inflate(R.layout.add_repeating_spending, null);
 
+        ButterKnife.bind(this, dialogView);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setPositiveButton("Ok", null);
         dialogBuilder.setCancelable(false);

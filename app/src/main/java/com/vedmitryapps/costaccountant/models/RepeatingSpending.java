@@ -1,5 +1,6 @@
 package com.vedmitryapps.costaccountant.models;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -13,9 +14,20 @@ public class RepeatingSpending extends RealmObject {
     String startDate;
     String lastCheckDate;
     float price;
+    int desf;
+
+    private RealmList<SpendingDay> days;
 
     int hours;
     int minutes;
+
+    public RealmList<SpendingDay> getDays() {
+        return days;
+    }
+
+    public void setDays(RealmList<SpendingDay> days) {
+        this.days = days;
+    }
 
     public int getHours() {
         return hours;

@@ -44,7 +44,7 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         holder.type.setText(list.get(position).getType());
-        holder.product.setText(list.get(position).getProduct().getName());
+        holder.product.setText(list.get(position).getProduct().getName() + " " + list.get(position).getProduct().getId());
         holder.category.setText(list.get(position).getProduct().getCategory().getName());
         holder.price.setText("" + list.get(position).getPrice());
 

@@ -169,8 +169,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         for (RepeatingSpending spending:spendings
                 ) {
 
-            Log.d("TAG21", "Iteration/ " + spending.getLastCheckDate());
-            Log.d("TAG21", "Iteration/ " + spending.getStartDate());
+            Log.d("TAG21", "Iteration/ last check" + spending.getLastCheckDate());
+            Log.d("TAG21", "Iteration/ start day" + spending.getStartDate());
 
             if(spending.getLastCheckDate()==null ){
                 Log.d("TAG21", "add last check date" );
@@ -190,17 +190,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             for (;true;){
                 Log.d("TAG21", "inner iteration");
 
-           /*     if(calendarStart.get(Calendar.DAY_OF_MONTH)==calendarEnd.get(Calendar.DAY_OF_MONTH)
-                        && calendarStart.get(Calendar.MONTH)==calendarEnd.get(Calendar.MONTH)
-                        && calendarStart.get(Calendar.YEAR)==calendarEnd.get(Calendar.YEAR)){
-                    Log.d("TAG21", "iteration is today/ Break");
-                    break;
-                } else {
-                    calendarStart.add(Calendar.DAY_OF_MONTH, 1);
-
-                    Log.d("TAG21", "iteration not today. cont...");
-                }*/
-
                 if(calendarStart.after(calendarEnd)){
                     Log.d("TAG21", "last check tomorrow. Break");
                     break;
@@ -216,7 +205,9 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                     }
 
                     DayPair dayPair = new DayPair();
+                    dayPair.setId(Util.getNextDayPairId(realm));
                     dayPair.setProduct(spending.getProduct());
+                    Log.d("TAG21", "day pair.add product" + spending.getProduct().getId());
                     dayPair.setPrice(spending.getPrice());
                     day.getList().add(dayPair);
 
