@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 }
             }
             if(spending.getType().equals(RepeatingSpendingType.EVERYWEEK.name())){
-                
+
             }
 
 
