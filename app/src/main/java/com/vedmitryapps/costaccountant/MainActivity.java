@@ -36,6 +36,7 @@ import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
 import com.vedmitryapps.costaccountant.models.RepeatingSpending;
+import com.vedmitryapps.costaccountant.models.RepeatingSpendingType;
 import com.vedmitryapps.costaccountant.models.UniqProduct;
 
 import org.greenrobot.eventbus.EventBus;
@@ -168,55 +169,64 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         for (RepeatingSpending spending:spendings
                 ) {
+            Log.d("TAG21", "type - " + spending.getType());
 
-            Log.d("TAG21", "Iteration/ last check" + spending.getLastCheckDate());
-            Log.d("TAG21", "Iteration/ start day" + spending.getStartDate());
+            if(spending.getType().equals(RepeatingSpendingType.EVERYDAY.name())){
+                Log.d("TAG21", "Iteration/ last check" + spending.getLastCheckDate());
+                Log.d("TAG21", "Iteration/ start day" + spending.getStartDate());
 
-            if(spending.getLastCheckDate()==null ){
-                Log.d("TAG21", "add last check date" );
-                realm.beginTransaction();
-                spending.setLastCheckDate(spending.getStartDate());
-                realm.commitTransaction();
-            }
-
-            calendarStart.set(
-                    Util.year(spending.getLastCheckDate()),
-                    Util.month(spending.getLastCheckDate()),
-                    Util.day(spending.getLastCheckDate()));
-
-            calendarStart.set(Calendar.MINUTE, spending.getMinutes());
-            calendarStart.set(Calendar.HOUR_OF_DAY, spending.getHours());
-
-            for (;true;){
-                Log.d("TAG21", "inner iteration");
-
-                if(calendarStart.after(calendarEnd)){
-                    Log.d("TAG21", "last check tomorrow. Break");
-                    break;
-                } else {
-                    Log.d("TAG21", "last check before");
+                if(spending.getLastCheckDate()==null ){
+                    Log.d("TAG21", "add last check date" );
                     realm.beginTransaction();
-
-                    day = realm.where(Day.class).equalTo("id", dateFormat.format(calendarStart.getTime())).findFirst();
-
-                    if(day==null){
-                        Log.d("TAG21", dateFormat.format(calendarStart.getTime()) + " is null. create...");
-                        day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
-                    }
-
-                    DayPair dayPair = new DayPair();
-                    dayPair.setId(Util.getNextDayPairId(realm));
-                    dayPair.setProduct(spending.getProduct());
-                    Log.d("TAG21", "day pair.add product" + spending.getProduct().getId());
-                    dayPair.setPrice(spending.getPrice());
-                    day.getList().add(dayPair);
-
-                    Log.d("TAG21", "add day");
-                    calendarStart.add(Calendar.DAY_OF_MONTH, 1);
-                    spending.setLastCheckDate(dateFormat.format(calendarStart.getTime()));
+                    spending.setLastCheckDate(spending.getStartDate());
                     realm.commitTransaction();
                 }
+
+                calendarStart.set(
+                        Util.year(spending.getLastCheckDate()),
+                        Util.month(spending.getLastCheckDate()),
+                        Util.day(spending.getLastCheckDate()));
+
+                calendarStart.set(Calendar.MINUTE, spending.getMinutes());
+                calendarStart.set(Calendar.HOUR_OF_DAY, spending.getHours());
+
+                for (;true;){
+                    Log.d("TAG21", "inner iteration");
+
+                    if(calendarStart.after(calendarEnd)){
+                        Log.d("TAG21", "last check tomorrow. Break");
+                        break;
+                    } else {
+                        Log.d("TAG21", "last check before");
+                        realm.beginTransaction();
+
+                        day = realm.where(Day.class).equalTo("id", dateFormat.format(calendarStart.getTime())).findFirst();
+
+                        if(day==null){
+                            Log.d("TAG21", dateFormat.format(calendarStart.getTime()) + " is null. create...");
+                            day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
+                        }
+
+                        DayPair dayPair = new DayPair();
+                        dayPair.setId(Util.getNextDayPairId(realm));
+                        dayPair.setProduct(spending.getProduct());
+                        Log.d("TAG21", "day pair.add product" + spending.getProduct().getId());
+                        dayPair.setPrice(spending.getPrice());
+                        day.getList().add(dayPair);
+
+                        Log.d("TAG21", "add day");
+                        calendarStart.add(Calendar.DAY_OF_MONTH, 1);
+                        spending.setLastCheckDate(dateFormat.format(calendarStart.getTime()));
+                        realm.commitTransaction();
+                    }
+                }
             }
+            if(spending.getType().equals(RepeatingSpendingType.EVERYWEEK.name())){
+                
+            }
+
+
+
         }
 
     }

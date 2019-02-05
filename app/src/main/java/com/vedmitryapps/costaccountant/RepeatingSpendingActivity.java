@@ -37,6 +37,7 @@ import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
 import com.vedmitryapps.costaccountant.models.RepeatingSpending;
 import com.vedmitryapps.costaccountant.models.RepeatingSpendingType;
+import com.vedmitryapps.costaccountant.models.SpendingDay;
 import com.vedmitryapps.costaccountant.models.UniqProduct;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -53,6 +54,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class RepeatingSpendingActivity extends AppCompatActivity {
@@ -161,13 +163,11 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     void showCreateDialog(final String s, final Events.ClickProduct event){
-        @BindView(R.id.checkBoxMon)
-        CheckBox mon;
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = (LayoutInflater) this.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         final View dialogView = inflater.inflate(R.layout.add_repeating_spending, null);
 
-        ButterKnife.bind(this, dialogView);
+        //ButterKnife.bind(this, dialogView);
         dialogBuilder.setView(dialogView);
         dialogBuilder.setPositiveButton("Ok", null);
         dialogBuilder.setCancelable(false);
@@ -177,6 +177,15 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+
+        final CheckBox mon = dialogView.findViewById(R.id.checkBoxMon);
+        final CheckBox tue = dialogView.findViewById(R.id.checkBoxTue);
+        final CheckBox wed = dialogView.findViewById(R.id.checkBoxWed);
+        final CheckBox thu = dialogView.findViewById(R.id.checkBoxThu);
+        final CheckBox fri = dialogView.findViewById(R.id.checkBoxFri);
+        final CheckBox sat = dialogView.findViewById(R.id.checkBoxSat);
+        final CheckBox sun = dialogView.findViewById(R.id.checkBoxSun);
+
 
         ConstraintLayout daysOfWeek = dialogView.findViewById(R.id.daysOfWeekContainer);
         ConstraintLayout dayOfMonth = dialogView.findViewById(R.id.dayOfMonthContainer);
@@ -474,6 +483,61 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                         repeatingSpending.setType(s);
                         repeatingSpending.setHours(hourOfDay);
                         repeatingSpending.setMinutes(minute);
+
+                        if(s.equals(RepeatingSpendingType.EVERYWEEK.name())){
+                            Log.i("TAG21", "type - " + RepeatingSpendingType.EVERYWEEK.name());
+
+                            RealmList<SpendingDay> list = repeatingSpending.getDays();
+                            SpendingDay spendingDay;
+                            if(mon.isChecked()){
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 1).findFirst();
+                                if(spendingDay==null){
+                                    spendingDay = realm.createObject(SpendingDay.class, 1);
+                                    list.add(spendingDay);
+                                }
+                            }
+                            if(tue.isChecked()){
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 2).findFirst();
+                                if(spendingDay==null){
+                                    spendingDay = realm.createObject(SpendingDay.class, 2);
+                                    list.add(spendingDay);
+                                }
+                            }
+                            if(wed.isChecked()){
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 3).findFirst();
+                                if(spendingDay==null){
+                                    spendingDay = realm.createObject(SpendingDay.class, 3);
+                                    list.add(spendingDay);
+                                }
+                            }
+                            if(thu.isChecked()){
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 4).findFirst();
+                                if(spendingDay==null){
+                                    spendingDay = realm.createObject(SpendingDay.class, 4);
+                                    list.add(spendingDay);
+                                }
+                            }  if(fri.isChecked()){
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 5).findFirst();
+                                if(spendingDay==null){
+                                    spendingDay = realm.createObject(SpendingDay.class, 5);
+                                    list.add(spendingDay);
+                                }
+                            }
+                            if(sat.isChecked()){
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 6).findFirst();
+                                if(spendingDay==null){
+                                    spendingDay = realm.createObject(SpendingDay.class, 6);
+                                    list.add(spendingDay);
+                                }
+                            }
+                            if(sun.isChecked()){
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 7).findFirst();
+                                if(spendingDay==null){
+                                    spendingDay = realm.createObject(SpendingDay.class, 7);
+                                    list.add(spendingDay);
+                                }
+                            }
+                        }
 
 
                         realm.commitTransaction();
