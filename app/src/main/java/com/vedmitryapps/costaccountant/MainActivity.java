@@ -37,6 +37,7 @@ import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
 import com.vedmitryapps.costaccountant.models.RepeatingSpending;
 import com.vedmitryapps.costaccountant.models.RepeatingSpendingType;
+import com.vedmitryapps.costaccountant.models.SpendingDay;
 import com.vedmitryapps.costaccountant.models.UniqProduct;
 
 import org.greenrobot.eventbus.EventBus;
@@ -52,6 +53,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener{
@@ -223,8 +225,16 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             }
             if(spending.getType().equals(RepeatingSpendingType.EVERYWEEK.name())){
 
+                RealmList<SpendingDay> list = spending.getDays();
+                Log.d("TAG21", "list size: " + list.size());
+
+                for (int i = 0; i < list.size(); i++) {
+                    Log.d("TAG21", "DAY " + list.get(i).getDay());
+                }
+
                 Log.d("TAG21", "Iteration/ last check" + spending.getLastCheckDate());
                 Log.d("TAG21", "Iteration/ start day" + spending.getStartDate());
+
 
                 for (;true;){
                     Log.d("TAG21", "inner iteration");
@@ -243,14 +253,24 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                             day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
                         }
 
-                        
+                        int dayOfWeek = calendarStart.get(Calendar.DAY_OF_WEEK);
 
-                        DayPair dayPair = new DayPair();
-                        dayPair.setId(Util.getNextDayPairId(realm));
-                        dayPair.setProduct(spending.getProduct());
-                        Log.d("TAG21", "day pair.add product" + spending.getProduct().getId());
-                        dayPair.setPrice(spending.getPrice());
-                        day.getList().add(dayPair);
+                        Log.d("TAG21", "dayOfWeek = " + dayOfWeek);
+
+                        for (SpendingDay d:list
+                             ) {
+                            Log.d("TAG21", "day - " + d.getDay());
+
+                            if(d.getDay() == dayOfWeek){
+
+                                DayPair dayPair = new DayPair();
+                                dayPair.setId(Util.getNextDayPairId(realm));
+                                dayPair.setProduct(spending.getProduct());
+                                Log.d("TAG21", "day pair.add product" + spending.getProduct().getId());
+                                dayPair.setPrice(spending.getPrice());
+                                day.getList().add(dayPair);
+                            }
+                        }
 
                         Log.d("TAG21", "add day");
                         calendarStart.add(Calendar.DAY_OF_MONTH, 1);
@@ -258,10 +278,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                         realm.commitTransaction();
                     }
                 }
-
-
-
-
             }
 
 

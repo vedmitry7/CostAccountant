@@ -490,52 +490,54 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                             RealmList<SpendingDay> list = repeatingSpending.getDays();
                             SpendingDay spendingDay;
                             if(mon.isChecked()){
-                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 1).findFirst();
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", Calendar.MONDAY).findFirst();
                                 if(spendingDay==null){
-                                    spendingDay = realm.createObject(SpendingDay.class, 1);
-                                    list.add(spendingDay);
+                                    spendingDay = realm.createObject(SpendingDay.class, Calendar.MONDAY);
+                                    Log.i("TAG21", "add mon - " +  Calendar.MONDAY);
                                 }
+                                list.add(spendingDay);
                             }
                             if(tue.isChecked()){
-                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 2).findFirst();
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", Calendar.TUESDAY).findFirst();
                                 if(spendingDay==null){
-                                    spendingDay = realm.createObject(SpendingDay.class, 2);
-                                    list.add(spendingDay);
+                                    spendingDay = realm.createObject(SpendingDay.class, Calendar.TUESDAY);
                                 }
+                                Log.i("TAG21", "add tue - " +  Calendar.TUESDAY);
+                                list.add(spendingDay);
                             }
                             if(wed.isChecked()){
-                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 3).findFirst();
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", Calendar.WEDNESDAY).findFirst();
                                 if(spendingDay==null){
-                                    spendingDay = realm.createObject(SpendingDay.class, 3);
-                                    list.add(spendingDay);
+                                    spendingDay = realm.createObject(SpendingDay.class, Calendar.WEDNESDAY);
                                 }
+                                list.add(spendingDay);
                             }
                             if(thu.isChecked()){
-                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 4).findFirst();
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", Calendar.THURSDAY).findFirst();
                                 if(spendingDay==null){
-                                    spendingDay = realm.createObject(SpendingDay.class, 4);
-                                    list.add(spendingDay);
+                                    spendingDay = realm.createObject(SpendingDay.class, Calendar.THURSDAY);
                                 }
+                                list.add(spendingDay);
                             }  if(fri.isChecked()){
-                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 5).findFirst();
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", Calendar.FRIDAY).findFirst();
                                 if(spendingDay==null){
-                                    spendingDay = realm.createObject(SpendingDay.class, 5);
-                                    list.add(spendingDay);
+                                    spendingDay = realm.createObject(SpendingDay.class, Calendar.FRIDAY);
                                 }
+                                list.add(spendingDay);
                             }
                             if(sat.isChecked()){
-                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 6).findFirst();
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", Calendar.SATURDAY).findFirst();
                                 if(spendingDay==null){
-                                    spendingDay = realm.createObject(SpendingDay.class, 6);
-                                    list.add(spendingDay);
+                                    spendingDay = realm.createObject(SpendingDay.class, Calendar.SATURDAY);
                                 }
+                                list.add(spendingDay);
                             }
                             if(sun.isChecked()){
-                                spendingDay = realm.where(SpendingDay.class).equalTo("day", 7).findFirst();
+                                spendingDay = realm.where(SpendingDay.class).equalTo("day", Calendar.SUNDAY).findFirst();
                                 if(spendingDay==null){
-                                    spendingDay = realm.createObject(SpendingDay.class, 7);
-                                    list.add(spendingDay);
+                                    spendingDay = realm.createObject(SpendingDay.class, Calendar.SUNDAY);
                                 }
+                                list.add(spendingDay);
                             }
                         }
 
