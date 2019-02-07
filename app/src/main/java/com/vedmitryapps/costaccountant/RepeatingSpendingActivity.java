@@ -251,6 +251,20 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
         spinner.setAdapter(adapter);
 
+        final int[] position = new int[1];
+        position[0] = 1;
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                position[0] = pos+1;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         final UniqProduct[] uniqProducts = new UniqProduct[1];
         final boolean[] categoryWasFilledFirst = {false};
         final Category[] category = new Category[1];
@@ -541,13 +555,17 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                             }
                         }
 
+                        if(s.equals(RepeatingSpendingType.EVERYMONTH.name())){
+
+                            RealmList<SpendingDay> list = repeatingSpending.getDays();
+                            list.add(getSpendingDay(position[0]));
+
+                        }
 
                         realm.commitTransaction();
 
                         b.dismiss();
                         App.closeKeyboard(getApplicationContext());
-
-
 
                     }
                 });
@@ -557,6 +575,14 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
         b.show();
         App.showKeyboard(getApplicationContext());
 
+    }
+
+    SpendingDay getSpendingDay(int i){
+        SpendingDay spendingDay = realm.where(SpendingDay.class).equalTo("day", i).findFirst();
+        if(spendingDay==null){
+            spendingDay = realm.createObject(SpendingDay.class, i);
+        }
+        return spendingDay;
     }
 
 

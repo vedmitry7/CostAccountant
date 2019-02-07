@@ -280,6 +280,62 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 }
             }
 
+            if(spending.getType().equals(RepeatingSpendingType.EVERYMONTH.name())){
+                RealmList<SpendingDay> list = spending.getDays();
+                Log.d("TAG21", "list size: " + list.size());
+
+                for (int i = 0; i < list.size(); i++) {
+                    Log.d("TAG21", "DAY " + list.get(i).getDay());
+                }
+
+                Log.d("TAG21", "Iteration/ last check" + spending.getLastCheckDate());
+                Log.d("TAG21", "Iteration/ start day" + spending.getStartDate());
+
+
+                for (;true;){
+                    Log.d("TAG21", "inner iteration");
+
+                    if(calendarStart.after(calendarEnd)){
+                        Log.d("TAG21", "last check tomorrow. Break");
+                        break;
+                    } else {
+                        Log.d("TAG21", "last check before");
+                        realm.beginTransaction();
+
+                        day = realm.where(Day.class).equalTo("id", dateFormat.format(calendarStart.getTime())).findFirst();
+
+                        if(day==null){
+                            Log.d("TAG21", dateFormat.format(calendarStart.getTime()) + " is null. create...");
+                            day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
+                        }
+
+                        int dayOfMonth = calendarStart.get(Calendar.DAY_OF_MONTH);
+
+                        Log.d("TAG21", "dayOfWeek = " + dayOfMonth);
+
+                        for (SpendingDay d:list
+                                ) {
+                            Log.d("TAG21", "day - " + d.getDay());
+
+                            if(d.getDay() == dayOfMonth){
+
+                                DayPair dayPair = new DayPair();
+                                dayPair.setId(Util.getNextDayPairId(realm));
+                                dayPair.setProduct(spending.getProduct());
+                                Log.d("TAG21", "day pair.add product" + spending.getProduct().getId());
+                                dayPair.setPrice(spending.getPrice());
+                                day.getList().add(dayPair);
+                            }
+                        }
+
+                        Log.d("TAG21", "add day");
+                        calendarStart.add(Calendar.DAY_OF_MONTH, 1);
+                        spending.setLastCheckDate(dateFormat.format(calendarStart.getTime()));
+                        realm.commitTransaction();
+                    }
+                }
+            }
+
 
 
         }
