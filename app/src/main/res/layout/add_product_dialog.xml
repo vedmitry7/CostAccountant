@@ -81,7 +81,7 @@
             android:layout_marginBottom="0dp"
             android:ems="10"
             android:hint="Стоимость"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:text="" />
 
     </android.support.design.widget.TextInputLayout>

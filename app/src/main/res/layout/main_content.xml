@@ -105,6 +105,28 @@
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/spendingPlaceHolder"
+        android:background="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/daysRecyclerView">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:textSize="18dp"
+            android:layout_marginTop="100dp"
+            android:text="Траты на этот день отсутствуют"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -151,5 +173,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendarView"
         tools:ignore="MissingConstraints" />
+
+
+
+    <View
+
+        app:layout_constraintTop_toBottomOf="@+id/daysRecyclerView"
+        android:background="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
 
 </android.support.constraint.ConstraintLayout>

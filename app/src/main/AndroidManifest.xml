@@ -20,7 +20,8 @@
         <activity android:name=".DiagramActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".CategoriesActivity" />
-        <activity android:name=".RepeatingSpendingActivity"></activity>
+        <activity android:name=".RepeatingSpendingActivity" />
+        <activity android:name=".RemoveSpendingActivity"></activity>
     </application>
 
 </manifest>

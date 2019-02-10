@@ -96,7 +96,7 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
         } else {
             float f = Util.countDayPrice(day);
             if(f!=0){
-                holder.daySpending.setText(String.valueOf(f));
+                holder.daySpending.setText(Util.countDayPriceString(day));
             } else {
                 holder.daySpending.setText("");
             }
@@ -137,13 +137,15 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
         calendar.set(Util.year(list.get(list.size()-1)), Util.month(list.get(list.size()-1)), Util.day(list.get(list.size()-1)));
 
         calendar.add(Calendar.DAY_OF_MONTH, -list.size());
+        //list.add(0, dateFormat.format(calendar.getTime()));
 
         for (int i = 0; i < 30; i++) {
-            calendar.add(Calendar.DAY_OF_MONTH, -1);
             list.add(0, dateFormat.format(calendar.getTime()));
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
             Log.d("TAG21", "add - " + dateFormat.format(calendar.getTime()));
         }
         currentDayPos+=30;
+        choosenItem+=30;
         notifyItemRangeInserted(0, 30);
     }
 

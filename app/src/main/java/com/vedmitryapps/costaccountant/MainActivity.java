@@ -4,8 +4,10 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -43,6 +46,7 @@ import com.vedmitryapps.costaccountant.models.UniqProduct;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
 
+    @BindView(R.id.spendingPlaceHolder)
+    ConstraintLayout spendingPlaceHolder;
+
     Calendar calendar = Calendar.getInstance();
     String dateText;
 
@@ -84,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     Day day;
 
     DateFormat dateFormat;
+    DateFormat dateFormatDB = new SimpleDateFormat("dd.MM.yyyy");
+
+    String currentDayId;
 
     SpendingRecyclerAdapter adapter;
     DaysRecyclerAdapter daysAdapter;
@@ -94,21 +104,19 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
+
         checkRepeatingSpendings();
+
         dateFormat  = android.text.format.DateFormat.getDateFormat(getApplicationContext());
 
-        showDate();
+        initDay(dateFormatDB.format(calendar.getTime()));
 
         adapter = new SpendingRecyclerAdapter(day);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
-
-        initDay(dateText);
 
 
         daysAdapter = new DaysRecyclerAdapter();
@@ -188,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             calendarStart.set(Calendar.MINUTE, spending.getMinutes());
             calendarStart.set(Calendar.HOUR_OF_DAY, spending.getHours());
 
-            if(spending.getType().equals(RepeatingSpendingType.EVERYDAY.name())){
+            if(spending.getType().equals(RepeatingSpendingType.DAILY.name())){
                 Log.d("TAG21", "Iteration/ last check" + spending.getLastCheckDate());
                 Log.d("TAG21", "Iteration/ start day" + spending.getStartDate());
 
@@ -223,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                     }
                 }
             }
-            if(spending.getType().equals(RepeatingSpendingType.EVERYWEEK.name())){
+            if(spending.getType().equals(RepeatingSpendingType.WEEKLY.name())){
 
                 RealmList<SpendingDay> list = spending.getDays();
                 Log.d("TAG21", "list size: " + list.size());
@@ -280,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 }
             }
 
-            if(spending.getType().equals(RepeatingSpendingType.EVERYMONTH.name())){
+            if(spending.getType().equals(RepeatingSpendingType.MONTHLY.name())){
                 RealmList<SpendingDay> list = spending.getDays();
                 Log.d("TAG21", "list size: " + list.size());
 
@@ -334,6 +342,53 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                         realm.commitTransaction();
                     }
                 }
+
+
+                for (;true;){
+                    Log.d("TAG21", "inner iteration");
+
+                    if(calendarStart.after(calendarEnd)){
+                        Log.d("TAG21", "last check tomorrow. Break");
+                        break;
+                    } else {
+                        Log.d("TAG21", "last check before");
+                        realm.beginTransaction();
+
+
+
+
+                        day = realm.where(Day.class).equalTo("id", dateFormat.format(calendarStart.getTime())).findFirst();
+
+                        if(day==null){
+                            Log.d("TAG21", dateFormat.format(calendarStart.getTime()) + " is null. create...");
+                            day = realm.createObject(Day.class, dateFormat.format(calendarStart.getTime()));
+                        }
+
+                        int dayOfMonth = calendarStart.get(Calendar.DAY_OF_MONTH);
+
+                        Log.d("TAG21", "dayOfWeek = " + dayOfMonth);
+
+                        for (SpendingDay d:list
+                                ) {
+                            Log.d("TAG21", "day - " + d.getDay());
+
+                            if(d.getDay() == dayOfMonth){
+
+                                DayPair dayPair = new DayPair();
+                                dayPair.setId(Util.getNextDayPairId(realm));
+                                dayPair.setProduct(spending.getProduct());
+                                Log.d("TAG21", "day pair.add product" + spending.getProduct().getId());
+                                dayPair.setPrice(spending.getPrice());
+                                day.getList().add(dayPair);
+                            }
+                        }
+
+                        Log.d("TAG21", "add day");
+                        calendarStart.add(Calendar.DAY_OF_MONTH, 1);
+                        spending.setLastCheckDate(dateFormat.format(calendarStart.getTime()));
+                        realm.commitTransaction();
+                    }
+                }
             }
 
 
@@ -353,17 +408,25 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             realm.commitTransaction();
         }
 
+        currentDayId = dayId;
 
+        if(adapter!=null)
         adapter.update(day);
 
+        if(day.getList().size()==0){
+            spendingPlaceHolder.setVisibility(View.VISIBLE);
+        } else {
+            spendingPlaceHolder.setVisibility(View.GONE);
+        }
+
         calendar.set(Util.year(dayId), Util.month(dayId), Util.day(dayId));
-        dayCount.setText("Всего: " + Util.countDayPrice(day));
+        dayCount.setText("Всего: " + Util.countDayPriceString(day));
 
         showDate();
     }
 
     private void showDate(){
-        // DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        // DateFormat dateFormatDB = new SimpleDateFormat("dd.MM.yyyy");
 
         dateText = dateFormat.format(calendar.getTime());
         dateTextView.setText(dateText);
@@ -916,11 +979,9 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                         }
                         realm.commitTransaction();
 
-
-                        dayCount.setText("Всего: " + Util.countDayPrice(day));
+                        initDay(currentDayId);
                         b.dismiss();
                         App.closeKeyboard(getApplicationContext());
-                        adapter.notifyDataSetChanged();
                         daysAdapter.notifyDataSetChanged();
                     }
                 });
@@ -1011,6 +1072,16 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
             case R.id.repeating_spending:
                 Intent intent2 = new Intent(this, RepeatingSpendingActivity.class);
                 startActivity(intent2);
+                drawerLayout.closeDrawer(navigationView);
+                break;
+            case R.id.remove_spending:
+                Intent intent3 = new Intent(this, RemoveSpendingActivity.class);
+                startActivity(intent3);
+                drawerLayout.closeDrawer(navigationView);
+                break;
+            case R.id.settings:
+                Intent intent4 = new Intent(this, SettingsActivity.class);
+                startActivity(intent4);
                 drawerLayout.closeDrawer(navigationView);
                 break;
         }

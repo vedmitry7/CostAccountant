@@ -12,6 +12,9 @@
     <item android:title="Категории"
         android:id="@+id/categories"
         android:icon="@drawable/ic_categories"/>
+    <item android:title="Удалить период"
+        android:id="@+id/remove_spending"
+        android:icon="@drawable/ic_calendar_remove"/>
 
     <item android:title="Настройки"
         android:id="@+id/settings"

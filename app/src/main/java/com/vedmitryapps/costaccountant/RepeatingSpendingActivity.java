@@ -143,13 +143,13 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.everyday:
-                        showCreateDialog(RepeatingSpendingType.EVERYDAY.name(), null);
+                        showCreateDialog(RepeatingSpendingType.DAILY.name(), null);
                         break;
                     case R.id.everyweek:
-                        showCreateDialog(RepeatingSpendingType.EVERYWEEK.name(), null);
+                        showCreateDialog(RepeatingSpendingType.WEEKLY.name(), null);
                         break;
                     case R.id.everymonth:
-                        showCreateDialog(RepeatingSpendingType.EVERYMONTH.name(), null);
+                        showCreateDialog(RepeatingSpendingType.MONTHLY.name(), null);
                         break;
                 }
 
@@ -217,16 +217,16 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
 
 
-        if(s.equals(RepeatingSpendingType.EVERYDAY.name())){
+        if(s.equals(RepeatingSpendingType.DAILY.name())){
             dialogBuilder.setTitle("Ежедневная трата");
             daysOfWeek.setVisibility(View.GONE);
             dayOfMonth.setVisibility(View.GONE);
         }
-        if(s.equals(RepeatingSpendingType.EVERYWEEK.name())){
+        if(s.equals(RepeatingSpendingType.WEEKLY.name())){
             dialogBuilder.setTitle("Ежеднедельная трата");
             dayOfMonth.setVisibility(View.GONE);
         }
-        if(s.equals(RepeatingSpendingType.EVERYMONTH.name())){
+        if(s.equals(RepeatingSpendingType.MONTHLY.name())){
             dialogBuilder.setTitle("Ежемесячная трата");
             daysOfWeek.setVisibility(View.GONE);
         }
@@ -498,8 +498,8 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                         repeatingSpending.setHours(hourOfDay);
                         repeatingSpending.setMinutes(minute);
 
-                        if(s.equals(RepeatingSpendingType.EVERYWEEK.name())){
-                            Log.i("TAG21", "type - " + RepeatingSpendingType.EVERYWEEK.name());
+                        if(s.equals(RepeatingSpendingType.WEEKLY.name())){
+                            Log.i("TAG21", "type - " + RepeatingSpendingType.WEEKLY.name());
 
                             RealmList<SpendingDay> list = repeatingSpending.getDays();
                             SpendingDay spendingDay;
@@ -555,7 +555,7 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
                             }
                         }
 
-                        if(s.equals(RepeatingSpendingType.EVERYMONTH.name())){
+                        if(s.equals(RepeatingSpendingType.MONTHLY.name())){
 
                             RealmList<SpendingDay> list = repeatingSpending.getDays();
                             list.add(getSpendingDay(position[0]));

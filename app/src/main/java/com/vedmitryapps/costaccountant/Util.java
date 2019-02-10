@@ -32,11 +32,36 @@ public class Util {
 
         float sum = 0;
         for (DayPair p:pairs
-             ) {
+                ) {
             sum += p.getPrice();
         }
 
         return sum;
+    }
+
+    public static String countDayPriceString(Day day){
+
+        float f = countDayPrice(day);
+        return floatToString(f);
+
+    }
+
+    public static String floatToString(float f){
+        String formattedFloat;
+        if(SharedManager.getProperty(Constants.KEY_USE_DECIMAL)){
+            //  formattedFloat = String.format("%.2f", f);
+            formattedFloat = new DecimalFormat("#0.00").format(f);
+        } else {
+            formattedFloat = new DecimalFormat("#0").format(f);
+        }
+
+        while (formattedFloat.endsWith("0"))
+            formattedFloat = formattedFloat.substring(0,formattedFloat.length()-2);
+
+        if(formattedFloat.endsWith(","))
+            formattedFloat = formattedFloat.substring(0,formattedFloat.length()-1);
+
+        return formattedFloat;
     }
 
 
@@ -48,7 +73,7 @@ public class Util {
         float sum = 0f;
 
         for (Pair p:list
-             ) {
+                ) {
             sum += (float) p.second;
         }
 

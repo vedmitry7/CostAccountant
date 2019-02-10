@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.vedmitryapps.costaccountant.Events;
 import com.vedmitryapps.costaccountant.R;
+import com.vedmitryapps.costaccountant.Util;
 import com.vedmitryapps.costaccountant.models.Day;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,7 +40,7 @@ public class SpendingRecyclerAdapter extends RecyclerView.Adapter<SpendingRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
 
         holder.productName.setText(day.getList().get(position).getProduct().getName() + " " + day.getList().get(position).getProduct().getId());
-        holder.productPrice.setText("" + day.getList().get(position).getPrice());
+        holder.productPrice.setText(Util.floatToString(day.getList().get(position).getPrice()));
 
         holder.productCategory.setText(day.getList().get(position).getProduct().getCategory().getName());
     }
