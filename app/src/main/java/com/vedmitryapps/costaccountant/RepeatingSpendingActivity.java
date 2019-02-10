@@ -1,10 +1,13 @@
 package com.vedmitryapps.costaccountant;
 
+import android.animation.Animator;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Rect;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +22,10 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -33,7 +40,6 @@ import android.widget.TimePicker;
 
 import com.vedmitryapps.costaccountant.adapters.RepeatingSpendingRecyclerAdapter;
 import com.vedmitryapps.costaccountant.models.Category;
-import com.vedmitryapps.costaccountant.models.DayPair;
 import com.vedmitryapps.costaccountant.models.Product;
 import com.vedmitryapps.costaccountant.models.RepeatingSpending;
 import com.vedmitryapps.costaccountant.models.RepeatingSpendingType;
@@ -61,6 +67,15 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
+    @BindView(R.id.rootView)
+    ConstraintLayout rootView;
+
+    @BindView(R.id.container)
+    ConstraintLayout container;
+
+    @BindView(R.id.bottomButton)
+    ConstraintLayout bottomButton;
 
     TextView time;
     TextView startDateTextView;
@@ -143,7 +158,10 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.everyday:
-                        showCreateDialog(RepeatingSpendingType.DAILY.name(), null);
+                        App.showKeyboard(getApplicationContext());
+                        container.setVisibility(View.VISIBLE);
+                        bottomButton.setVisibility(View.GONE);
+                       // showCreateDialog(RepeatingSpendingType.DAILY.name(), null);
                         break;
                     case R.id.everyweek:
                         showCreateDialog(RepeatingSpendingType.WEEKLY.name(), null);
@@ -242,7 +260,7 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
         Spinner spinner = dialogView.findViewById(R.id.daySpinner);
         List<String> days = new ArrayList<>();
         for (int i = 0; i < 31; i++) {
-           days.add(""+ (i+1));
+            days.add(""+ (i+1));
         }
 
         ArrayAdapter<String> adapter =

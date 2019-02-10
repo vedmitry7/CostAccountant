@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -16,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -46,7 +44,6 @@ import com.vedmitryapps.costaccountant.models.UniqProduct;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -82,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     @BindView(R.id.spendingPlaceHolder)
     ConstraintLayout spendingPlaceHolder;
+
 
     Calendar calendar = Calendar.getInstance();
     String dateText;
@@ -992,10 +990,13 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         App.showKeyboard(getApplicationContext());
     }
 
+    @OnClick(R.id.menuButton)
+    public void menu(View v){
+        drawerLayout.openDrawer(navigationView);
+    }
 
-    @OnClick(R.id.shooseDate)
-    public void shooseDate(View v){
-
+    @OnClick(R.id.dateTextView)
+    public void chooseDate(View v){
 
         /* AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(DiagramActivity.this);
                         //dialogBuilder.setTitle("Трата");

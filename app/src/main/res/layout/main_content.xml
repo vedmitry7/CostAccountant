@@ -5,46 +5,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.github.badoualy.datepicker.DatePickerTimeline
-        android:id="@+id/datePickerTimeline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:mti_bgLblDateSelectedColor="#00ff00"
-        app:mti_lblDateColor="#000000"
-        app:mti_lblDateSelectedColor="#ff0000"
-        app:mti_primaryColor="#ffffff"
-        app:mti_primaryDarkColor="#222222"
-        app:mti_tabBeforeSelectionColor="#222222"
-        app:mti_tabSelectedColor="#ff00ff" />
-
-    <com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar
-        android:id="@+id/calendarView"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/dateTextView">
-
-
-    </com.shrikanthravi.collapsiblecalendarview.widget.CollapsibleCalendar>
-
     <TextView
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:text="2418456"
         android:textColor="@android:color/black"
         android:textSize="20dp"
         app:layout_constraintEnd_toStartOf="@+id/imageButton3"
-        app:layout_constraintStart_toEndOf="@+id/shooseDate"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/menuButton"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
 
     <android.support.constraint.ConstraintLayout
@@ -153,14 +127,14 @@
     </android.support.constraint.ConstraintLayout>
 
     <ImageView
-        android:id="@+id/shooseDate"
+        android:id="@+id/menuButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_calendar"
+        app:srcCompat="@drawable/ic_menu"
         tools:ignore="VectorDrawableCompat" />
 
     <android.support.v7.widget.RecyclerView
@@ -171,7 +145,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendarView"
+        app:layout_constraintTop_toBottomOf="@+id/dateTextView"
         tools:ignore="MissingConstraints" />
 
 

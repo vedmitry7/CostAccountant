@@ -14,7 +14,6 @@ public class RepeatingSpending extends RealmObject {
     String startDate;
     String lastCheckDate;
     float price;
-    int ewfds;
 
     private RealmList<SpendingDay> days;
 

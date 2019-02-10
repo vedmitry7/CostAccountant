@@ -51,16 +51,17 @@ public class Util {
         if(SharedManager.getProperty(Constants.KEY_USE_DECIMAL)){
             //  formattedFloat = String.format("%.2f", f);
             formattedFloat = new DecimalFormat("#0.00").format(f);
+            float x = f - (int) f;
+            if(x==0f){
+                Log.i("TAG21", "X == 0 " + formattedFloat);
+                formattedFloat = formattedFloat.substring(0,formattedFloat.indexOf(","));
+            }
+            if(formattedFloat.endsWith("0")){
+                formattedFloat = formattedFloat.substring(0,formattedFloat.length()-1);
+            }
         } else {
             formattedFloat = new DecimalFormat("#0").format(f);
         }
-
-        while (formattedFloat.endsWith("0"))
-            formattedFloat = formattedFloat.substring(0,formattedFloat.length()-2);
-
-        if(formattedFloat.endsWith(","))
-            formattedFloat = formattedFloat.substring(0,formattedFloat.length()-1);
-
         return formattedFloat;
     }
 
