@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vedmitryapps.costaccountant.Events;
@@ -39,7 +40,7 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
     Date date = calendar.getTime();
 
     int currentDayPos = 30;
-    int choosenItem = -1;
+    int choosenItem = 30;
 
     String dateText = dateFormat.format(date);
     List<String> list = new ArrayList<>();
@@ -73,16 +74,19 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
         holder.dayOfMonth.setText(Util.returnDayByDate(list.get(position)));
 
         if(position == currentDayPos){
-            holder.dayOfMonth.setTextColor(Color.BLACK);
+            holder.dayOfMonth.setTextColor(Color.WHITE);
             holder.dayOfMonth.setBackgroundResource(R.drawable.stroke);
         } else {
             holder.dayOfMonth.setBackgroundResource(0);
-            holder.dayOfMonth.setTextColor(Color.BLACK);
+            holder.dayOfMonth.setTextColor(Color.WHITE);
         }
 
         if(position == choosenItem){
             holder.dayOfMonth.setBackgroundResource(R.drawable.fill_bg);
-            holder.dayOfMonth.setTextColor(Color.WHITE);
+            holder.dayOfMonth.setTextColor(Color.BLACK);
+            holder.indicator.setVisibility(View.VISIBLE);
+        } else {
+            holder.indicator.setVisibility(View.GONE);
         }
 
         calendar.set(Util.year(list.get(position)), Util.month(list.get(position)), Util.day(list.get(position)));
@@ -160,6 +164,9 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
 
         @BindView(R.id.daySpending)
         TextView daySpending;
+
+        @BindView(R.id.indicator)
+        ImageView indicator;
 
         ViewHolder(final View itemView) {
             super(itemView);
