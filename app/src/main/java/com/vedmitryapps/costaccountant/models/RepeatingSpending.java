@@ -14,6 +14,15 @@ public class RepeatingSpending extends RealmObject {
     String startDate;
     String lastCheckDate;
     float price;
+    boolean enabled;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     private RealmList<SpendingDay> days;
 

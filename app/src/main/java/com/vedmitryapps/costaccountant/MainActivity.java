@@ -23,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -105,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     boolean b;
 
+    AlphaAnimation animation;
+    AlphaAnimation animation1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
 
+        initAnimation();
 
         checkRepeatingSpendings();
 
@@ -177,11 +181,26 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         try {
             Date date = dateFormatDB.parse(dayId);
-            SimpleDateFormat format = new SimpleDateFormat("MMMM yyyy");
+            SimpleDateFormat format = new SimpleDateFormat("MMM yyyy");
             additionalInfo.setText(format.format(date));
+
+            additionalInfo.startAnimation(animation);
+            additionalInfo.startAnimation(animation1);
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    void initAnimation(){
+        animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(100);
+        animation.setFillAfter(true);
+
+        animation1 = new AlphaAnimation(1.0f, 0.0f);
+        animation1.setDuration(500);
+        animation1.setStartOffset(500);
+        animation1.setFillAfter(true);
     }
 
 
@@ -215,6 +234,16 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
             calendarStart.set(Calendar.MINUTE, spending.getMinutes());
             calendarStart.set(Calendar.HOUR_OF_DAY, spending.getHours());
+            Log.d("TAG21", "Check enabled");
+
+            if(!spending.isEnabled()){
+                realm.beginTransaction();
+                spending.setLastCheckDate(dateFormat.format(calendarEnd.getTime()));
+                realm.commitTransaction();
+                Log.d("TAG21", "not enabled. return");
+                return;
+            }
+            Log.d("TAG21", "continue work...");
 
             if(spending.getType().equals(RepeatingSpendingType.DAILY.name())){
                 Log.d("TAG21", "Iteration/ last check" + spending.getLastCheckDate());

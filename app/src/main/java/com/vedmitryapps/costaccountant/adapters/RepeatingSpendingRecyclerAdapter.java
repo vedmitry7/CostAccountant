@@ -2,12 +2,16 @@ package com.vedmitryapps.costaccountant.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.vedmitryapps.costaccountant.R;
+import com.vedmitryapps.costaccountant.SharedManager;
 import com.vedmitryapps.costaccountant.models.Day;
 import com.vedmitryapps.costaccountant.models.RepeatingSpending;
 
@@ -26,7 +30,6 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
 
     public RepeatingSpendingRecyclerAdapter() {
         realm = Realm.getDefaultInstance();
-
         list = realm.where(RepeatingSpending.class).findAll();
     }
 
@@ -47,7 +50,16 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
         holder.product.setText(list.get(position).getProduct().getName() + " " + list.get(position).getProduct().getId());
         holder.category.setText(list.get(position).getProduct().getCategory().getName());
         holder.price.setText("" + list.get(position).getPrice());
+        holder.switch1.setChecked(list.get(position).isEnabled());
 
+        holder.switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                realm.beginTransaction();
+                list.get(position).setEnabled(isChecked);
+                realm.commitTransaction();
+                notifyDataSetChanged();
+            }
+        });
     }
 
     // total number of rows
@@ -56,7 +68,10 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
         return list.size();
     }
 
-    public void update(Day day) {
+    public void update() {
+        list = realm.where(RepeatingSpending.class).findAll();
+        Log.d("TAG21", "sp size realm  " + realm.where(RepeatingSpending.class).findAll().size());
+
         notifyDataSetChanged();
     }
 
@@ -71,6 +86,9 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
         TextView category;
         @BindView(R.id.price)
         TextView price;
+
+        @BindView(R.id.switch1)
+        Switch switch1;
 
         ViewHolder(final View itemView) {
             super(itemView);

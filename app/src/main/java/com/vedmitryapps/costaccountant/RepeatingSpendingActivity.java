@@ -158,10 +158,10 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.everyday:
-                        App.showKeyboard(getApplicationContext());
-                        container.setVisibility(View.VISIBLE);
-                        bottomButton.setVisibility(View.GONE);
-                       // showCreateDialog(RepeatingSpendingType.DAILY.name(), null);
+                       // App.showKeyboard(getApplicationContext());
+                        //container.setVisibility(View.VISIBLE);
+                        //bottomButton.setVisibility(View.GONE);
+                        showCreateDialog(RepeatingSpendingType.DAILY.name(), null);
                         break;
                     case R.id.everyweek:
                         showCreateDialog(RepeatingSpendingType.WEEKLY.name(), null);
@@ -263,11 +263,11 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
             days.add(""+ (i+1));
         }
 
-        ArrayAdapter<String> adapter =
+        final ArrayAdapter<String> spinnerAdapter =
                 new ArrayAdapter<String>(this,  android.R.layout.simple_spinner_dropdown_item, days);
-        adapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item);
+        spinnerAdapter.setDropDownViewResource( android.R.layout.simple_spinner_dropdown_item);
 
-        spinner.setAdapter(adapter);
+        spinner.setAdapter(spinnerAdapter);
 
         final int[] position = new int[1];
         position[0] = 1;
@@ -580,9 +580,12 @@ public class RepeatingSpendingActivity extends AppCompatActivity {
 
                         }
 
+                        repeatingSpending.setEnabled(true);
                         realm.commitTransaction();
 
                         b.dismiss();
+
+                        adapter.update();
                         App.closeKeyboard(getApplicationContext());
 
                     }
