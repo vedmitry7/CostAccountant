@@ -114,6 +114,11 @@ public class DaysRecyclerAdapter extends RecyclerView.Adapter<DaysRecyclerAdapte
         return list.size();
     }
 
+
+    public String getItemByPosition(int pos){
+        return list.get(pos);
+    }
+
     public void update(Day day) {
         notifyDataSetChanged();
     }

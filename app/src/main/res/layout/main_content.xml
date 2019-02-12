@@ -156,19 +156,40 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:background="#212121"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/daysRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/daysRecyclerView">
+
+        <TextView
+            android:id="@+id/additionalInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Январь 2018"
+            android:textColor="#55ffffff"
+            android:textSize="36dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/daysRecyclerView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#212121"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarContainer"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="209dp" />
-
+        tools:ignore="MissingConstraints" />
 
 
     <View

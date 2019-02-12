@@ -48,9 +48,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     @BindView(R.id.dayCount)
     TextView dayCount;
+
+    @BindView(R.id.additionalInfo)
+    TextView additionalInfo;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -139,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 Log.d("TAG21", "last - " + last);
                 Log.d("TAG21", "count - " + layoutManager.getItemCount());
 
+                showInfo(daysAdapter.getItemByPosition(first));
+
                 int total = layoutManager.getItemCount();
 
 
@@ -164,6 +171,18 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+
+    void showInfo(String dayId){
+        Calendar calendar = Calendar.getInstance();
+
+        try {
+            Date date = dateFormatDB.parse(dayId);
+            SimpleDateFormat format = new SimpleDateFormat("MMMM yyyy");
+            additionalInfo.setText(format.format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     private void checkRepeatingSpendings() {
