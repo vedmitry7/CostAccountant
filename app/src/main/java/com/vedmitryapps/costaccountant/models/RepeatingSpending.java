@@ -15,6 +15,7 @@ public class RepeatingSpending extends RealmObject {
     String lastCheckDate;
     float price;
     boolean enabled;
+    boolean sdf;
 
     public boolean isEnabled() {
         return enabled;

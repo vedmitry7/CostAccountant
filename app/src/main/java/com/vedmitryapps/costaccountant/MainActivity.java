@@ -209,6 +209,10 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         Calendar calendarStart = Calendar.getInstance();
         Calendar calendarEnd = Calendar.getInstance();
+        calendarEnd.set(2019,1,21);
+
+        calendarStart.set(Calendar.MINUTE, 13);
+        calendarStart.set(Calendar.HOUR_OF_DAY, 13);
         Day day;
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -232,8 +236,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                     Util.month(spending.getLastCheckDate()),
                     Util.day(spending.getLastCheckDate()));
 
-            calendarStart.set(Calendar.MINUTE, spending.getMinutes());
-            calendarStart.set(Calendar.HOUR_OF_DAY, spending.getHours());
+            calendarStart.set(Calendar.MINUTE, 0);
+            calendarStart.set(Calendar.HOUR_OF_DAY, 0);
             Log.d("TAG21", "Check enabled");
 
             if(!spending.isEnabled()){
@@ -241,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                 spending.setLastCheckDate(dateFormat.format(calendarEnd.getTime()));
                 realm.commitTransaction();
                 Log.d("TAG21", "not enabled. return");
-                return;
+                continue;
             }
             Log.d("TAG21", "continue work...");
 
@@ -968,6 +972,34 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
          *      OK click listener
          * */
         final AlertDialog b = dialogBuilder.create();
+        if(event!=null)
+        b.setButton(AlertDialog.BUTTON_NEUTRAL, "Удалить", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                dialogBuilder.setMessage("Вы уверены что хотите удалить " + product[0].getName() + " из затрат на " + dateFormat.format(calendar.getTime()) + "?");
+                //alertDialog.setMessage("Alert message to be shown");
+                dialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                realm.beginTransaction();
+                                day.getList().remove(event.getPosition());
+                                realm.commitTransaction();
+                                adapter.notifyDataSetChanged();
+                                App.closeKeyboard(MainActivity.this);
+                                dialog.dismiss();
+                            }
+                        });
+                dialogBuilder.setNegativeButton( "Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                App.closeKeyboard(MainActivity.this);
+                                dialog.dismiss();
+                            }
+                        });
+                dialogBuilder.show();
+
+            }});
         b.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override

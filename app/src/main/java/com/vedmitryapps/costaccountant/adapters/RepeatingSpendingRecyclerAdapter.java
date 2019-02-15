@@ -57,7 +57,6 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
                 realm.beginTransaction();
                 list.get(position).setEnabled(isChecked);
                 realm.commitTransaction();
-                notifyDataSetChanged();
             }
         });
     }
@@ -86,7 +85,6 @@ public class RepeatingSpendingRecyclerAdapter extends RecyclerView.Adapter<Repea
         TextView category;
         @BindView(R.id.price)
         TextView price;
-
         @BindView(R.id.switch1)
         Switch switch1;
 
