@@ -34,6 +34,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.codingending.popuplayout.PopupLayout;
 import com.vedmitryapps.costaccountant.adapters.DaysRecyclerAdapter;
 import com.vedmitryapps.costaccountant.adapters.SpendingRecyclerAdapter;
 import com.vedmitryapps.costaccountant.models.Category;
@@ -117,6 +118,10 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         realm = Realm.getDefaultInstance();
 
         initAnimation();
+
+
+
+
 
 
         dateFormat  = android.text.format.DateFormat.getDateFormat(getApplicationContext());
@@ -780,6 +785,12 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showCreateOrChangeDialog2(final Events.ClickProduct event) {
+
+        PopupLayout popupLayout=PopupLayout.init(MainActivity.this, R.layout.add_product_dialog);
+        popupLayout.show(PopupLayout.POSITION_TOP);
+      //  popupLayout.show();
+
+
 
         final UniqProduct[] uniqProducts = new UniqProduct[1];
         final boolean[] categoryWasFilledFirst = {false};
