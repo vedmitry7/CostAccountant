@@ -1,6 +1,7 @@
 package com.vedmitryapps.costaccountant;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -117,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
         initAnimation();
 
-        checkRepeatingSpendings();
 
         dateFormat  = android.text.format.DateFormat.getDateFormat(getApplicationContext());
 
@@ -173,8 +173,17 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
 
         navigationView.setNavigationItemSelectedListener(this);
+
+
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkRepeatingSpendings();
+
+    }
 
     void showInfo(String dayId){
         Calendar calendar = Calendar.getInstance();
@@ -205,14 +214,16 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
 
 
     private void checkRepeatingSpendings() {
+      /*  ProgressDialog progressDialog = ProgressDialog.show(this, "Проверка", "");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER    );
+
+        progressDialog.show();*/
+
         RealmResults<RepeatingSpending> spendings = realm.where(RepeatingSpending.class).findAll();
 
         Calendar calendarStart = Calendar.getInstance();
         Calendar calendarEnd = Calendar.getInstance();
-        calendarEnd.set(2019,1,21);
-
-        calendarStart.set(Calendar.MINUTE, 13);
-        calendarStart.set(Calendar.HOUR_OF_DAY, 13);
+        //calendarEnd.set(2019,1,21);
         Day day;
 
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -443,9 +454,6 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                     }
                 }
             }
-
-
-
         }
 
     }
@@ -975,6 +983,8 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
         if(event!=null)
         b.setButton(AlertDialog.BUTTON_NEUTRAL, "Удалить", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                App.closeKeyboard(MainActivity.this);
+
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
                 dialogBuilder.setMessage("Вы уверены что хотите удалить " + product[0].getName() + " из затрат на " + dateFormat.format(calendar.getTime()) + "?");
                 //alertDialog.setMessage("Alert message to be shown");
@@ -986,14 +996,12 @@ public class MainActivity extends AppCompatActivity implements  NavigationView.O
                                 day.getList().remove(event.getPosition());
                                 realm.commitTransaction();
                                 adapter.notifyDataSetChanged();
-                                App.closeKeyboard(MainActivity.this);
                                 dialog.dismiss();
                             }
                         });
                 dialogBuilder.setNegativeButton( "Cancel",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                App.closeKeyboard(MainActivity.this);
                                 dialog.dismiss();
                             }
                         });

@@ -13,7 +13,10 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -59,6 +62,9 @@ public class DiagramActivity extends AppCompatActivity {
     @BindView(R.id.chart)
     PieChart mChart;
 
+    @BindView(R.id.additionalInfo)
+    TextView additionalInfo;
+
     @BindView(R.id.statisticRecyclerView)
     RecyclerView recyclerView;
 
@@ -71,6 +77,7 @@ public class DiagramActivity extends AppCompatActivity {
 
     StatisticRecyclerAdapter adapter;
 
+    Animation animation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,14 +117,20 @@ public class DiagramActivity extends AppCompatActivity {
        // mChart.animateY(300);
 
         // set a chart value selected listener
+        animation = new AlphaAnimation(1.0f, 0.0f);
+        animation.setDuration(1000);
+        animation.setStartOffset(1000);
+        animation.setFillAfter(true);
         mChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override
             public void onValueSelected(Entry e, Highlight h) {
                 if (e == null)
                     return;
-                Toast.makeText(DiagramActivity.this,
-                        xData[(int)e.getX()] + " = " + e.getData() + "%", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(DiagramActivity.this, e.getY() + " " + e.getX() , Toast.LENGTH_SHORT).show();
+                additionalInfo.setVisibility(View.VISIBLE);
+                additionalInfo.setText(Util.floatToString(e.getY()));
+                additionalInfo.startAnimation(animation);
             }
 
             @Override
@@ -125,6 +138,7 @@ public class DiagramActivity extends AppCompatActivity {
 
             }
         });
+
 
 
         ViewPortHandler handler = mChart.getViewPortHandler();
@@ -151,6 +165,7 @@ public class DiagramActivity extends AppCompatActivity {
         currentMonth();
 
         period.setText("Текущий месяц");
+
     }
 
     private void initRecycler() {
@@ -248,6 +263,7 @@ public class DiagramActivity extends AppCompatActivity {
 /*        Highlight[] highlights = new Highlight[1];
         highlights [0] =  new Highlight(5, 7, 0);*/
 
+
         // undo all highlights
         mChart.highlightValues(null);
         mChart.notifyDataSetChanged();
@@ -261,11 +277,15 @@ public class DiagramActivity extends AppCompatActivity {
     public void changeView(View v){
         Log.i("TAG21", "cl");
 
+        additionalInfo.setVisibility(View.GONE);
+
         if(recyclerView.getVisibility()==View.VISIBLE){
             recyclerView.setVisibility(View.GONE);
             mChart.setVisibility(View.VISIBLE);
+            ((ImageView)v).setImageDrawable(getResources().getDrawable(R.drawable.ic_list));
         }
         else {
+            ((ImageView)v).setImageDrawable(getResources().getDrawable(R.drawable.ic_chart_pie));
             recyclerView.setVisibility(View.VISIBLE);
             mChart.setVisibility(View.GONE);
         }
@@ -459,6 +479,7 @@ public class DiagramActivity extends AppCompatActivity {
 
         if(list == null){
             addData(realm.where(Day.class).findAll());
+            adapter.update(this.list);
             return;
         }
         ArrayList<Day> days = new ArrayList<>();

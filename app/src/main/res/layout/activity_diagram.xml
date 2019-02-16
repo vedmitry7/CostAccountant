@@ -34,6 +34,18 @@
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <ImageView
+            android:padding="10dp"
+            android:id="@+id/changeView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_list"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 
 
@@ -46,42 +58,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbarContainer">
 
+
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/statisticRecyclerView"
             android:layout_width="match_parent"
-
             android:layout_height="0dp"
             android:background="@android:color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/changeView" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.github.mikephil.charting.charts.PieChart
-            android:background="#f5f5f5"
             android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:background="#f5f5f5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <Button
-            android:id="@+id/changeView"
-            style="@style/Widget.AppCompat.Light.ActionButton"
+        <TextView
+            android:id="@+id/additionalInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@color/colorPrimary"
-            android:text="Change"
-            android:textColor="@android:color/white"
+            android:layout_marginTop="16dp"
+            android:text=""
+            android:textColor="@android:color/black"
+            android:textSize="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/chart" />
 
     </android.support.constraint.ConstraintLayout>
 
